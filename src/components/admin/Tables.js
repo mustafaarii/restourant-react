@@ -1,0 +1,145 @@
+import React, { Component } from 'react'
+import apiURL from '../apiURL'
+import { Modal, Loader, Alert } from 'rsuite';
+import renderError from '../../helper/renderError';
+
+export default class Tables extends Component {
+
+    state = {
+        tables: null,
+        modal: false,
+        addResponse: null,
+        tableName: null
+    }
+
+
+
+    componentDidMount() {
+        this.getAllTables();
+    }
+
+    getAllTables = () => {
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        fetch(apiURL + "user/all_tables", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + user.token
+            },
+        }).then(res => res.json()).then(data => {
+            this.setState({ tables: data })
+        }).catch(res => { console.log(res) })
+    }
+
+    addTable = (e) => {
+        e.preventDefault();
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        const {tableName} = this.state;
+        fetch(apiURL + "admin/add_table", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + user.token
+            },
+            body:JSON.stringify({tableName:tableName})
+        }).then(res => {
+            if (res.status === 200 || res.status===201) return res.json();
+            else throw new Error();
+        }).then(data => {
+            if (data.status == null) {
+                this.setState({ addResponse: { status: "false", errors: data.errors } })
+            } else if (data.status == "false") {
+                this.setState({ addResponse: { status: data.status, errors: [data.error] } })
+            } else {
+                this.setState({ addResponse: { status: data.status, message: data.message } });
+                this.getAllTables();
+            }
+        }).catch(res=>{Alert.error("Masa eklenemedi. Daha sonra tekrar deneyin.")})
+    }
+
+    deleteTable = tableId => {
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        fetch(apiURL+"admin/delete_table/"+tableId,{
+            method:"DELETE",
+            headers:{
+                'Content-Type' : 'application/json',
+                Authorization: 'Bearer ' + user.token
+            }
+        }).then(res => {
+            if(res.status===200) return res.json()
+            else throw new Error();
+        }).then(data => {
+            this.setState({tables:this.state.tables.filter(table=>table.id!==tableId)})
+            Alert.success(data.message);
+        })
+        .catch(res => Alert.error("Masa silinemedi. Daha sonra tekrar deneyin."))
+    }
+
+
+    modalStatus = () => { this.setState({ modal: !this.state.modal,tableName:null,addResponse:null }) }
+
+    renderTables = () => {
+        const { tables } = this.state;
+        if (tables !== null) {
+            return (
+                <table className="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col">#Id</th>
+                            <th scope="col">Masa İsmi</th>
+                            <th scope="col">Durum</th>
+                            <th scope="col">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tables.map((table) =>
+                        (
+                            <tr key={table.id}>
+                                <th scope="row">{table.id}</th>
+                                <td>{table.tableName}</td>
+                                <td>{table.user == null ? "Boş" : "Dolu"}</td>
+                                <td><button type="button" className="btn btn-danger" onClick={()=>{this.deleteTable(table.id)}}>Masayı Sil</button>
+                                </td>
+                            </tr>
+                        )
+                        )}
+                    </tbody>
+                </table>
+            )
+        } else {
+            return (<Loader center content="Lütfen bekleyin..." />);
+        }
+    }
+
+    renderModal = () => {
+        const {addResponse,modal} = this.state;
+        return (
+            <Modal show={modal} onHide={this.modalStatus}>
+                <form onSubmit={this.addTable}>
+                    <Modal.Header>
+                        <Modal.Title>Masa Ekle</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {addResponse!==null ? renderError(addResponse) : null}
+                        <label>Masa İsmi</label>
+                        <input type="text" name="tablename" onChange={e => { this.setState({ tableName: e.target.value }) }} className="form-control" placeholder="Masa ismi girin..." />
+
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button type="submit" className=" btn btn-mod btn-border-black btn-large btn-round">Masa Ekle</button>
+                    </Modal.Footer>
+                </form>
+            </Modal>)
+    }
+
+    render() {
+        return (
+            <div className="container" style={{ marginTop: "10%" }}>
+                <button onClick={this.modalStatus} className=" btn btn-mod btn-border-black btn-medium btn-circle">Masa Ekle</button>
+                {this.renderTables()}
+                {this.renderModal()}
+
+            </div>
+        )
+    }
+}
