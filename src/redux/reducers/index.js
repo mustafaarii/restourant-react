@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux'
 import userReducer from './userReducer'
-
+import basketReducer from './basketReducer'
 const rootReducer = combineReducers({
-    userReducer
+    userReducer,basketReducer
 });
 export default rootReducer;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import apiURL from '../apiURL'
-import { Loader } from 'rsuite'
+import { Alert, Loader } from 'rsuite'
 import { withRouter } from 'react-router-dom';
 
 class SitTable extends Component {
@@ -11,9 +11,19 @@ class SitTable extends Component {
   }
 
   componentDidMount() {
+    this.isSitting();
     setTimeout(this.getAllTables, 1000);
   }
 
+  isSitting = () => {
+    const { history } = this.props;
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    fetch(apiURL+"user/is_sitting",{
+     headers : { Authorization : 'Bearer ' + user.token}
+    }).then(res => {
+      if(res.status === 200) history.push('/to_order')
+    })
+  }
 
   getAllTables = () => {
     const user = JSON.parse(sessionStorage.getItem("user"));
@@ -33,8 +43,29 @@ class SitTable extends Component {
   }
 
   sitTable = () => {
-    const {history} = this.props;
-    history.push('/next')
+    const { selectedTable } = this.state;
+    const { history } = this.props;
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    
+    fetch(apiURL + "user/sit_table", {
+      method: "POST",
+      headers: {
+        'Content-Type' : 'application/json',
+        Authorization: 'Bearer ' + user.token
+      },
+      body: JSON.stringify({tableName : selectedTable})
+    }).then(res => {
+      if (res.status == 200) return res.json();
+      else throw new Error();
+    }).then(data => {
+      if (data.status === "false") {
+        Alert.error(data.error);
+      } else if (data.status === "true") {
+        Alert.success(data.message)
+        history.push('/to_order')
+      }
+    }).catch(res => Alert.error("Masaya oturamadınız. Daha sonra tekrar deneyin."))
+   
   }
 
   renderTables = () => {
@@ -63,7 +94,7 @@ class SitTable extends Component {
 
   renderNextButton = () => {
     const { selectedTable } = this.state;
-    const {history} = this.props;
+    const { history } = this.props;
 
     if (selectedTable !== null) {
       return (<div className="nextButton">

@@ -11,9 +11,7 @@ export default class Tables extends Component {
         addResponse: null,
         categoryName: null
     }
-
-
-
+    
     componentDidMount() {
         this.getAllCategories();
     }

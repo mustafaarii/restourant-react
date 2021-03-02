@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import {
     Switch,
     Route,
-    Router
 } from "react-router-dom";
 import Register from './Register';
 import Login from './Login'
@@ -12,7 +11,7 @@ import { connect } from 'react-redux'
 import Homepage from './Homepage';
 import Foods from './admin/Foods';
 import SitTable from './user/SitTable';
-import history from '../helper/history'
+import ToOrder from './user/ToOrder';
 
 class RouteComponent extends Component {
 
@@ -30,6 +29,7 @@ class RouteComponent extends Component {
             return (
                 <Switch>
                     <Route exact path="/sit_table"> <SitTable /> </Route>
+                    <Route exact path="/to_order"><ToOrder/></Route>
                 </Switch>)
         }
         else {

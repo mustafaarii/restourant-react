@@ -20,9 +20,9 @@ class Header extends Component {
     else if((user!==null || this.props.user!=null) && user.role==="USER"){
       return (
         <li className="tv-drop-menu">
-        <a data-toggle="dropdown" aria-expanded="false" className="tv-menu">{user.name}<i className="fa fa-angle-down" /></a>
+        <a data-toggle="dropdown" aria-expanded="false" className="tv-menu">{user.name} | {user.walley}₺<i className="fa fa-angle-down" /></a>
         <ul className="dropdown-menu tv-sub-menu" role="menu">
-        <li className><Link to="/sit_table" className="tv-menu" data-toggle="dropdown">Masaya Otur</Link></li>
+        <li className><Link to="/sit_table" className="tv-menu" data-toggle="dropdown">Masaya Otur ve Sipariş Ver</Link></li>
         </ul>
       </li>
       )

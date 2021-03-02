@@ -538,7 +538,7 @@ header {
     width: 80%;
 }
 .tv-menu-img {
-    border: 1px solid #a31621;
+    border: 2px solid #a31621;
     border-radius: 8px;
 }
 .tv-menu-block {
@@ -2262,3 +2262,20 @@ label {
 
   
 /*End Custom CSS*/
+
+.foods{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.tv-menu-block{
+    width: 45%;
+    margin-right: 5%;
+}
+
+.categoryButtonsDiv{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}

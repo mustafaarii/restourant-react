@@ -41,7 +41,6 @@ export default class Foods extends Component {
         .then(res => res.json())
         .then(data=>this.setState({foods:data}))
         .catch(res=>console.log(res))
-
     }
 
     addfood = (e) => {
