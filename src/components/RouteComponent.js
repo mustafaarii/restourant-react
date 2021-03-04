@@ -12,12 +12,15 @@ import Homepage from './Homepage';
 import Foods from './admin/Foods';
 import SitTable from './user/SitTable';
 import ToOrder from './user/ToOrder';
+import CompleteOrder from './user/CompleteOrder';
 
 class RouteComponent extends Component {
 
     renderLoginPath = () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        if ((user !== null || this.props.user != null) && user.role === "ADMIN") {
+        const token = sessionStorage.getItem("token");
+        const {user} = this.props;
+
+        if (token !== null && user.role.role === "ADMIN") { //eğer token varsa ve kullanıcı admin ise ulaşılabilecek routelar burada döner.
             return (
                 <Switch>
                     <Route exact path="/tables"><Tables /></Route>
@@ -25,11 +28,12 @@ class RouteComponent extends Component {
                     <Route exact path="/foods"><Foods /></Route>
                 </Switch>
             )
-        } else if ((user !== null || this.props.user != null) && user.role === "USER") {
+        } else if (token !== null && user.role.role === "USER") { //eğer token varsa ve kullanıcı user ise ulaşılabilecek routelar burada döner.
             return (
                 <Switch>
                     <Route exact path="/sit_table"> <SitTable /> </Route>
                     <Route exact path="/to_order"><ToOrder/></Route>
+                    <Route exact path="/complete_order"><CompleteOrder/></Route>
                 </Switch>)
         }
         else {

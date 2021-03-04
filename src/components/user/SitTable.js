@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import apiURL from '../apiURL'
-import { Alert, Loader } from 'rsuite'
+import { Alert, Button, Loader } from 'rsuite'
 import { withRouter } from 'react-router-dom';
+import { MdNavigateNext } from 'react-icons/md';
 
 class SitTable extends Component {
 
@@ -17,21 +18,21 @@ class SitTable extends Component {
 
   isSitting = () => {
     const { history } = this.props;
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const token = sessionStorage.getItem("token");
     fetch(apiURL+"user/is_sitting",{
-     headers : { Authorization : 'Bearer ' + user.token}
+     headers : { Authorization : 'Bearer ' + token}
     }).then(res => {
       if(res.status === 200) history.push('/to_order')
     })
   }
 
   getAllTables = () => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const token = sessionStorage.getItem("token");
     fetch(apiURL + "user/all_tables", {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + user.token
+        Authorization: 'Bearer ' + token
       },
     }).then(res => res.json()).then(data => {
       this.setState({ tables: data })
@@ -45,13 +46,13 @@ class SitTable extends Component {
   sitTable = () => {
     const { selectedTable } = this.state;
     const { history } = this.props;
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const token = sessionStorage.getItem("token");
     
     fetch(apiURL + "user/sit_table", {
       method: "POST",
       headers: {
         'Content-Type' : 'application/json',
-        Authorization: 'Bearer ' + user.token
+        Authorization: 'Bearer ' + token
       },
       body: JSON.stringify({tableName : selectedTable})
     }).then(res => {
@@ -98,7 +99,7 @@ class SitTable extends Component {
 
     if (selectedTable !== null) {
       return (<div className="nextButton">
-        <a className=" btn btn-mod btn-white btn-small btn-round" onClick={this.sitTable}>Otur ve Devam Et</a>
+        <Button color="green" onClick={this.sitTable}><MdNavigateNext/> Otur ve Devam Et</Button>
       </div>)
     }
     else { return null }

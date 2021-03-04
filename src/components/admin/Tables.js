@@ -19,12 +19,12 @@ export default class Tables extends Component {
     }
 
     getAllTables = () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_tables", {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             },
         }).then(res => res.json()).then(data => {
             this.setState({ tables: data })
@@ -33,13 +33,13 @@ export default class Tables extends Component {
 
     addTable = (e) => {
         e.preventDefault();
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         const {tableName} = this.state;
         fetch(apiURL + "admin/add_table", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             },
             body:JSON.stringify({tableName:tableName})
         }).then(res => {
@@ -58,12 +58,12 @@ export default class Tables extends Component {
     }
 
     deleteTable = tableId => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL+"admin/delete_table/"+tableId,{
             method:"DELETE",
             headers:{
                 'Content-Type' : 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             }
         }).then(res => {
             if(res.status===200) return res.json()

@@ -3,19 +3,25 @@ import * as actionTypes from '../actions/actionTypes'
 import initialState from './initialState'
 
 export default function (state=initialState.basket,action) {
+    let index,newState;
     switch (action.type){
         case actionTypes.addFood :
-            let index = state.findIndex(food => food.id === action.payload.id);
+            index = state.findIndex(food => food.id === action.payload.id);
             if(index!==-1){
                state[index] = {...state[index],count:state[index].count+action.payload.count}
-               return state;
             }else{
                 state.push(action.payload)
-                return state;
-            }    
-        
+            }
+            newState = [...state]
+            return newState; // statein referansı değişmediği zaman componentler render edilmiyor. Bu yüzden yeni dizi dönüldü.
         case actionTypes.removeFood : 
-            return state.filter(food => food.id != action.payload.id)
+            const filteredState = state.filter(food => food.id != action.payload.id)
+            return filteredState;
+        case actionTypes.changeFoodCount :
+            index = state.findIndex(food => food.id === action.payload.foodId)
+            state[index] = {...state[index],count:state[index].count+action.payload.count}
+            newState = [...state]
+            return newState;
         default : return state
     }
 }

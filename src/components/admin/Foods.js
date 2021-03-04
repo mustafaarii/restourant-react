@@ -20,10 +20,10 @@ export default class Foods extends Component {
     
 
     getCategories = () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_categories", {
             headers: {
-                Authorization: "Bearer " + user.token
+                Authorization: "Bearer " + token
             }
         })
             .then(res => res.json())
@@ -32,10 +32,10 @@ export default class Foods extends Component {
     }
 
     getFoods = () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_foods", {
             headers: {
-                Authorization: "Bearer " + user.token
+                Authorization: "Bearer " + token
             }
         })
         .then(res => res.json())
@@ -46,7 +46,7 @@ export default class Foods extends Component {
     addfood = (e) => {
         e.preventDefault();
         const { food, file } = this.state;
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         //form data oluşturuldu. İçerisine food nesnesi json olarak, file ise file olarak yerleştirildi.Headerda content-type kullanmadık.
         const data = new FormData();
         data.append('food',
@@ -58,7 +58,7 @@ export default class Foods extends Component {
         fetch(apiURL + "admin/add_food", {
             method: "POST",
             headers: {
-                Authorization: "Bearer " + user.token
+                Authorization: "Bearer " + token
             },
             body: data
         }).then(res => {
@@ -79,11 +79,11 @@ export default class Foods extends Component {
 
     deleteFood = foodId =>{
         const { foods } = this.state;
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL+"admin/delete_food/"+foodId,{
             method : "DELETE",
             headers : {
-                Authorization : "Bearer " + user.token
+                Authorization : "Bearer " + token
             }
         }).then(res=>{
             if (res.status===200) return res.json()

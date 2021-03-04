@@ -37,10 +37,9 @@ class Login extends Component {
             if(res.status == 403){ throw new Error();}
            else if(res.status == 200){ return res.json(); } }
         ).then(data=>{
-          sessionStorage.setItem("user",JSON.stringify(data))
-          this.props.actions.setUser(data);
+          sessionStorage.setItem("token",data.token)
+          this.props.actions.setUser();
           Alert.success("Başarıyla giriş yaptınız.")
-          
         }).catch(err => {Alert.error("Kullanıcı adı veya şifre yanlış.")})
     }
 

@@ -13,3 +13,10 @@ export function removeFood(food){
         payload : food
     }
 }
+
+export function changeFoodCount(foodId,count){
+    return {
+        type:actionTypes.changeFoodCount,
+        payload : {foodId:foodId,count:count}
+    }
+}

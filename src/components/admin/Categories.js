@@ -17,12 +17,12 @@ export default class Tables extends Component {
     }
 
     getAllCategories = () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_categories", {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             },
         }).then(res => res.json()).then(data => {
             this.setState({ categories: data })
@@ -31,13 +31,13 @@ export default class Tables extends Component {
 
     addCategory = (e) => {
         e.preventDefault();
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         const {categoryName} = this.state;
         fetch(apiURL + "admin/add_category", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             },
             body:JSON.stringify({name:categoryName})
         }).then(res => {
@@ -56,12 +56,12 @@ export default class Tables extends Component {
     }
 
     deleteCategory = categoryId => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL+"admin/delete_category/"+categoryId,{
             method:"DELETE",
             headers:{
                 'Content-Type' : 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             }
         }).then(res => {
             if(res.status===200) return res.json()

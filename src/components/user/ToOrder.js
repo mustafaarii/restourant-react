@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import apiURL from '../apiURL'
-import { Button, Loader, Modal,InputGroup,InputNumber } from 'rsuite'
+import { Button, Loader, Modal,InputGroup,InputNumber, Alert } from 'rsuite'
 import { RiShoppingBasketLine } from 'react-icons/ri'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as basketActions from '../../redux/actions/basketActions'
+import * as userActions from '../../redux/actions/userActions'
+import { withRouter } from 'react-router-dom'
+
 class ToOrder extends Component {
 
     state = {
@@ -17,18 +20,29 @@ class ToOrder extends Component {
     }
 
     componentDidMount() {
-        setTimeout(() => this.getAllFoods(), 1000);
+        this.isSitting();
+        setTimeout(() => this.getAllFoodsFetch(), 1000);
         setTimeout(() => this.getAllCategories(), 1000);
     }
 
+    isSitting = () => {
+        const { history } = this.props;
+        const token = sessionStorage.getItem("token");
+        fetch(apiURL+"user/is_sitting",{
+         headers : { Authorization : 'Bearer ' + token}
+        }).then(res => {
+          if(res.status !== 200) history.push('/sit_table')
+        })
+      }
+    
 
     getAllCategories = () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_categories", {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + user.token
+                Authorization: 'Bearer ' + token
             },
         }).then(res => res.json()).then(data => {
             this.setState({ categories: data })
@@ -36,11 +50,15 @@ class ToOrder extends Component {
     }
 
     getAllFoods = () => {
-        this.setState({ selectedCategory: null })
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        this.setState({selectedCategory:null,foods:null}) //loading efekti için state'teki bilgileri null yapıyorum
+        setTimeout(this.getAllFoodsFetch,1000)
+    } 
+
+    getAllFoodsFetch = () => {
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_foods", {
             headers: {
-                Authorization: "Bearer " + user.token
+                Authorization: "Bearer " + token
             }
         })
             .then(res => res.json())
@@ -49,10 +67,10 @@ class ToOrder extends Component {
     }
 
     getFoodsByCategory = (categoryId) => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/foods/" + categoryId, {
             headers: {
-                Authorization: "Bearer " + user.token
+                Authorization: "Bearer " + token
             }
         })
             .then(res => res.json())
@@ -61,23 +79,37 @@ class ToOrder extends Component {
     }
 
     changedSelectedCategory = (category) => {
-        this.getFoodsByCategory(category.id)
+        // seçili kategori değiştiğinde önce yiyecekler boşaltılıyor daha sonra istek atılıyor.
+        this.setState({foods:null})
+        setTimeout(() => this.getFoodsByCategory(category.id), 1000);
         this.setState({ selectedCategory: category.name })
     }
 
     selectItem = (food) => {
-        this.setState({ modalStatus: true ,selectedItem: food},()=>{console.log(this.state.selectedItem)})
+       
+        this.setState({ modalStatus: true ,selectedItem: food})
     }
 
     addBasket = () => {
+        // açılan modal'dan evet butonuna tıklanırsa sepete ekleme işlemi yapılır. Aynı zamanda bakiye düzenlenir. Eğer yeterli değilse sepete eklenmez ve
+        // user bilgisi düzenlenmez.
         const {selectedItem,itemCount} = this.state;
-        this.props.actions.addFood({...selectedItem,count:itemCount})
-        this.setState({modalStatus:false,selectedItem:null,itemCount:1},console.log(this.props.basket))
+        const {actions,user} = this.props;
+        if (user.walley<selectedItem.price*itemCount) {
+            Alert.error("Bakiyeniz yeterli değildir, lütfen yükleme yapınız.")
+        }else{ 
+            actions.addFood({...selectedItem,count:itemCount})
+        actions.decreaseWalley(selectedItem.price * itemCount)
+        this.setState({modalStatus:false,selectedItem:null,itemCount:1})
+        }
+       
     }
 
     closeModal = () => {this.setState({modalStatus:false,selectedItem:null,itemCount:1})}
 
     renderModal = () => {
+        const {selectedItem} = this.state;
+        /** evet butonuna art arda tıklanırsa state boşaldığı için hata veriyor bunu engellemek için disabled veriliyor. */ 
         return (
             <Modal show={this.state.modalStatus} onHide={this.closeModal}>
                 <Modal.Header>
@@ -98,7 +130,8 @@ class ToOrder extends Component {
 
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={this.addBasket} appearance="primary">
+                    <Button onClick={this.addBasket} appearance="primary" disabled={selectedItem === null ? true : null}> 
+                    
                         Ekle
               </Button>
                     <Button onClick={this.closeModal} appearance="subtle">
@@ -113,7 +146,7 @@ class ToOrder extends Component {
         let categoriesJSX = [];
         categoriesJSX.push(
             <div className="categoryButton">
-                <Button key={999} className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.getAllFoods() }}> Tümü</Button>
+                <Button key={999} className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.getAllFoods() }} > Tümü</Button>
             </div>
         )
         if (categories !== null) {
@@ -146,9 +179,9 @@ class ToOrder extends Component {
                             <div className="col-md-9 col-sm-9 col-xs-12">
                                 <div className="tv-menu-title">
                                     <h4>{food.foodName}</h4>
-                                    <span>{food.price} ₺</span>
+                                    <span><span class="badge badge-pill badge-success background-info">{food.price} ₺</span></span>
                                     <p>Kategori : {food.category.name}</p>
-                                    <span><Button className=" btn btn-success btn-round" onClick={() => this.selectItem(food)}><RiShoppingBasketLine /> Sepete Ekle</Button></span>
+                                    <span><Button onClick={() => this.selectItem(food)}><RiShoppingBasketLine /> Sepete Ekle</Button></span>
                                 </div>
                             </div>
                         </div>
@@ -182,6 +215,7 @@ class ToOrder extends Component {
 }
 function mapStateToProps(state) {
     return {
+        user:state.userReducer,
         basket: state.basketReducer
     }
 }
@@ -189,8 +223,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: {
-            addFood: bindActionCreators(basketActions.addFood, dispatch)
+            addFood: bindActionCreators(basketActions.addFood, dispatch),
+            decreaseWalley : bindActionCreators(userActions.decWalley,dispatch)
         }
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(ToOrder)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ToOrder))
