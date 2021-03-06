@@ -3,7 +3,6 @@ import apiURL from '../apiURL'
 import { Alert, Button, Loader } from 'rsuite'
 import { withRouter } from 'react-router-dom';
 import { MdNavigateNext } from 'react-icons/md';
-
 class SitTable extends Component {
 
   state = {
@@ -22,7 +21,7 @@ class SitTable extends Component {
     fetch(apiURL+"user/is_sitting",{
      headers : { Authorization : 'Bearer ' + token}
     }).then(res => {
-      if(res.status === 200) history.push('/to_order')
+      if(res.status === 200) history.push('/to_order');
     })
   }
 
@@ -79,10 +78,12 @@ class SitTable extends Component {
             <tbody>
               <tr>
                 {tables.map(table =>
-                  <td
-                    className={table.user !== null ? 'reserved' : 'available'}
-                    style={table.tableName === selectedTable ? { background: "orange" } : null}
-                    key={table.id} onClick={table.user === null ? () => this.selectTable(table) : null}>{table.tableName} </td>)}
+                  <td className={table.user !== null ? 'reserved' : 'available'}
+                      style={table.tableName === selectedTable ? { background: "orange" } : null}
+                      key={table.id} onClick={table.user === null ? () => this.selectTable(table) : null}>
+                        <img src="https://cdn0.iconfinder.com/data/icons/hotel-and-restaurant-cool-vector-3/128/136-512.png"></img>
+                        {table.tableName} 
+                  </td>)}
               </tr>
             </tbody>
           </table>
@@ -95,8 +96,6 @@ class SitTable extends Component {
 
   renderNextButton = () => {
     const { selectedTable } = this.state;
-    const { history } = this.props;
-
     if (selectedTable !== null) {
       return (<div className="nextButton">
         <Button color="green" onClick={this.sitTable}><MdNavigateNext/> Otur ve Devam Et</Button>
@@ -115,4 +114,7 @@ class SitTable extends Component {
     )
   }
 }
+
+
+
 export default withRouter(SitTable)

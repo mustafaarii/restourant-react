@@ -2223,7 +2223,8 @@ label {
 }
 
 .grid td {
-    width: 80px;
+    position: relative;
+    width: 100px;
     height: 50px;
     padding: 50px 5px;
     border: 2px solid #a31621;
@@ -2244,16 +2245,26 @@ label {
   }
   
   .reserved::after {
-    content: 'DOLU'
+    content: ' DOLU'
   }
   
   .available::after {
-    content: 'BOŞ'
+    content: ' BOŞ'
   }
   
   .available {
     color: #333;
 }
+
+.grid .available img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 50%;
+    width: 80%;
+    margin-left: 10%;
+}
+
 
 .nextButton{
     float: right;

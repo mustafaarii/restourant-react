@@ -13,6 +13,7 @@ import Foods from './admin/Foods';
 import SitTable from './user/SitTable';
 import ToOrder from './user/ToOrder';
 import CompleteOrder from './user/CompleteOrder';
+import MyOrders from './user/MyOrders';
 
 class RouteComponent extends Component {
 
@@ -34,6 +35,7 @@ class RouteComponent extends Component {
                     <Route exact path="/sit_table"> <SitTable /> </Route>
                     <Route exact path="/to_order"><ToOrder/></Route>
                     <Route exact path="/complete_order"><CompleteOrder/></Route>
+                    <Route exact path="/my_orders"><MyOrders/></Route>
                 </Switch>)
         }
         else {

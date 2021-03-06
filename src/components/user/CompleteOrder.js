@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import {Button} from 'rsuite'
 import { AiFillBackward } from 'react-icons/ai'
 import {CgMathMinus,CgMathPlus} from 'react-icons/cg'
-import { FaShoppingBasket,FaTrashAlt } from 'react-icons/fa'
+import { FaShoppingBasket,FaTrashAlt,FaCreditCard } from 'react-icons/fa'
 import {Alert} from 'rsuite'
 
 import { connect } from 'react-redux'
@@ -65,8 +65,33 @@ class CompleteOrder extends Component {
         const price = food.price*food.count;
         actions.removeFood(food);
         actions.increaseWalley(price);
-        this.changeTotalPrice(price);
+        this.changeTotalPrice(-price);
         // yiyecek sepetten kaldırılır. kullanıcının parası iade edilir. totalPrice state'i güncellenir.
+    }
+
+    completeOrder = () => {
+        const token = sessionStorage.getItem("token");
+        const {basket} = this.props;
+        let orders = [];
+
+        basket.forEach(food=>{
+            orders.push({foodId:food.id,count:food.count});
+        })
+
+        fetch(apiURL+"user/to_order",{
+            method : "POST",
+            headers : {
+                "Content-Type" : "application/json",
+                Authorization : "Bearer "+token
+            },
+            body : JSON.stringify(orders)
+        }).then(res=>{
+            if(res.status===200) return res.json();
+            if(res.status!==200) throw new Error();
+        }).then(data=>{
+            if (data.status === "true") Alert.success(data.message);
+            else Alert.error(data.error);
+        }).catch(res=>Alert.error("İşleminiz gerçekleştirilemedi. Daha sonra tekrar deneyin."))
     }
 
     renderPanel = () => {
@@ -119,27 +144,16 @@ class CompleteOrder extends Component {
                             ))
                         }
 
-                        <div className="row">
-                            <div className="text-center">
-                                <div className="col-xs-9">
-                                    <h6 className="text-right">Added items?</h6>
-                                </div>
-                                <div className="col-xs-3">
-                                    <button type="button" className="btn btn-default btn-sm btn-block">
-                                        Update cart
-                            </button>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                     <div className="panel-footer">
                         <div className="row text-center">
                             <div className="col-xs-9">
-                                <h4 className="text-right">Toplam Fiyat <strong>{totalPrice} ₺</strong></h4>
+                                <h4 className="text-right"><h6>Toplam :</h6> <strong>{totalPrice} ₺</strong></h4>
                             </div>
                             <div className="col-xs-3">
-                                <button type="button" className="btn btn-success btn-block">
-                                    Checkout
+                                <button type="button" onClick={this.completeOrder} className="btn btn-success btn-block">
+                                <FaCreditCard />  Siparişi Tamamla
                           </button>
                             </div>
                         </div>
@@ -147,8 +161,9 @@ class CompleteOrder extends Component {
                 </div>
             )
         } else {
-            return (<div className="alert alert-danger" style={{ width: "50%", marginLeft: "25%" }} role="alert">
+            return (<div className="alert alert-danger" style={{ width: "50%",height:"120px", marginLeft: "25%" }} role="alert">
                 <FaShoppingBasket />  Sepetiniz boş.<br /> Siparişi tamamlamak için lütfen sepete bir şeyler ekleyiniz.
+                <Button style={{float:"right"}} onClick={()=>history.push("/to_order")}>Geri Dön</Button>
             </div>)
         }
     }

@@ -40,7 +40,9 @@ class Header extends Component {
           {user.name}  {user.walley}₺
         </a>
         <ul className="dropdown-menu tv-sub-menu" role="menu">
-          <li className><Link to="/sit_table" className="tv-menu" data-toggle="dropdown">Masaya Otur ve Sipariş Ver</Link></li>
+          <li className><Link to="/sit_table" className="tv-menu" data-toggle="dropdown">Masaya Otur</Link></li>
+          <li className><Link to="/to_order" className="tv-menu" data-toggle="dropdown">Sipariş ver</Link></li>
+          <li className><Link to="/my_orders" className="tv-menu" data-toggle="dropdown">Siparişlerim</Link></li>
         </ul>
       </li>
       )
