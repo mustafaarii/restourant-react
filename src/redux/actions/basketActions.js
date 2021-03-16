@@ -20,3 +20,10 @@ export function changeFoodCount(foodId,count){
         payload : {foodId:foodId,count:count}
     }
 }
+
+export function clearBasket() {
+    return {
+        type:actionTypes.clearBasket,
+        payload:[]
+    }
+}

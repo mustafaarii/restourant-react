@@ -22,16 +22,23 @@ export function setUser() {
     }
 }
 
-export function decWalley(money) {
+export function decWallet(money) {
     return {
-        type : actionTypes.decreaseWalley,
+        type : actionTypes.decreaseWallet,
         payload : money
     }
 }
 
-export function incWalley(money) {
+export function incWallet(money) {
     return {
-        type : actionTypes.increaseWalley,
+        type : actionTypes.increaseWallet,
         payload : money
+    }
+}
+
+export function setReceipt(receiptId) {
+    return {
+        type: actionTypes.setReceipt,
+        payload : receiptId
     }
 }

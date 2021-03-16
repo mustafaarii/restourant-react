@@ -16,7 +16,7 @@ class SitTable extends Component {
   }
 
   isSitting = () => {
-    const { history } = this.props;
+    const { history,actions } = this.props;
     const token = sessionStorage.getItem("token");
     fetch(apiURL+"user/is_sitting",{
      headers : { Authorization : 'Bearer ' + token}

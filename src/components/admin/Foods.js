@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Loader, Alert } from 'rsuite'
+import { Modal, Loader, Alert, Pagination } from 'rsuite'
 import renderError from '../../helper/renderError'
 import apiURL from '../apiURL'
 
@@ -11,7 +11,9 @@ export default class Foods extends Component {
         modal: false,
         addResponse: null,
         food: { foodName: null, category: null, price: null },
-        file: null
+        file: null,
+        activePage:null,
+        totalPages:null
     }
 
     componentDidMount() {
@@ -31,15 +33,19 @@ export default class Foods extends Component {
             .catch(res => console.log(res))
     }
 
-    getFoods = () => {
+    getFoods = (activePage=1) => {
         const token = sessionStorage.getItem("token");
-        fetch(apiURL + "user/all_foods", {
+        fetch(apiURL + "user/all_foods?page="+activePage, {
             headers: {
                 Authorization: "Bearer " + token
             }
         })
         .then(res => res.json())
-        .then(data=>this.setState({foods:data}))
+        .then(data=>{
+            const {totalPages,content} = data;
+            this.setState({foods:content,totalPages,activePage})
+        
+        })
         .catch(res=>console.log(res))
     }
 
@@ -106,10 +112,16 @@ export default class Foods extends Component {
         this.setState({ file: e.target.files[0] })
     }
 
+    handleSelect = (activePage) => {
+        this.getFoods(activePage);
+        this.setState({activePage});
+    }
+
     renderFoods = () => { 
         const { foods } = this.state;
         if (foods !== null) {
             return (
+                <div>
                 <table className="table table-dark">
                     <thead>
                         <tr>
@@ -137,6 +149,20 @@ export default class Foods extends Component {
                         )}
                     </tbody>
                 </table>
+<center>
+                <Pagination
+          prev
+          last
+          next
+          first
+          size="lg"
+          pages={this.state.totalPages}
+          activePage={this.state.activePage}
+          onSelect={this.handleSelect}
+        />
+        </center>
+            </div>
+                
             )
         } else {
             return (<Loader center content="Lütfen bekleyin..." />);

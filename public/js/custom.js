@@ -13,6 +13,7 @@ $(window).load(function () {
 });
 
 $(document).ready(function () {
+    
     $(window).scroll(function () {
         if ($(this).scrollTop() > 100) {
             $('#back-to-top').fadeIn();
@@ -27,10 +28,12 @@ $(document).ready(function () {
 
 });
 $(document).ready(function () {
+    
     jQuery(".hover").mouseleave(
             function () {
                 jQuery(this).removeClass("hover");
             }
     );
+    
 });
 

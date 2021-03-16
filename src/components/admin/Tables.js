@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import apiURL from '../apiURL'
-import { Modal, Loader, Alert } from 'rsuite';
+import { Modal, Loader, Alert,Pagination } from 'rsuite';
 import renderError from '../../helper/renderError';
 
 export default class Tables extends Component {
@@ -9,25 +9,28 @@ export default class Tables extends Component {
         tables: null,
         modal: false,
         addResponse: null,
-        tableName: null
+        tableName: null,
+        activePage:null,
+        totalPages:null
     }
-
-
 
     componentDidMount() {
-        this.getAllTables();
+        setTimeout(() => {
+            this.getTables();
+        }, 500);
     }
 
-    getAllTables = () => {
+    getTables = (activePage=1) => {
         const token = sessionStorage.getItem("token");
-        fetch(apiURL + "user/all_tables", {
+        fetch(apiURL + "user/tables?page="+activePage, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: 'Bearer ' + token
             },
         }).then(res => res.json()).then(data => {
-            this.setState({ tables: data })
+            const {content,totalPages} = data;
+            this.setState({ tables: content,activePage,totalPages });
         }).catch(res => { console.log(res) })
     }
 
@@ -78,10 +81,15 @@ export default class Tables extends Component {
 
     modalStatus = () => { this.setState({ modal: !this.state.modal,tableName:null,addResponse:null }) }
 
+    handleSelect = (activePage) => {
+        this.getTables(activePage);
+    }
+
     renderTables = () => {
         const { tables } = this.state;
         if (tables !== null) {
             return (
+                <div>
                 <table className="table table-dark">
                     <thead>
                         <tr>
@@ -105,6 +113,19 @@ export default class Tables extends Component {
                         )}
                     </tbody>
                 </table>
+                <center>
+                <Pagination
+          prev
+          last
+          next
+          first
+          size="lg"
+          pages={this.state.totalPages}
+          activePage={this.state.activePage}
+          onSelect={this.handleSelect}
+        />
+        </center>
+                </div>
             )
         } else {
             return (<Loader center content="Lütfen bekleyin..." />);

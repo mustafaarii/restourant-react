@@ -14,6 +14,9 @@ import SitTable from './user/SitTable';
 import ToOrder from './user/ToOrder';
 import CompleteOrder from './user/CompleteOrder';
 import MyOrders from './user/MyOrders';
+import AddMoney from './user/AddMoney';
+import GetOffTheTable from './user/GetOffTheTable';
+import MyReceipts from './user/MyReceipts';
 
 class RouteComponent extends Component {
 
@@ -33,9 +36,12 @@ class RouteComponent extends Component {
             return (
                 <Switch>
                     <Route exact path="/sit_table"> <SitTable /> </Route>
+                    <Route exact path="/add_money"> <AddMoney /> </Route>
                     <Route exact path="/to_order"><ToOrder/></Route>
                     <Route exact path="/complete_order"><CompleteOrder/></Route>
                     <Route exact path="/my_orders"><MyOrders/></Route>
+                    <Route exact path="/get_off_thetable"><GetOffTheTable/></Route>
+                    <Route exact path="/my_receipts"><MyReceipts/></Route>
                 </Switch>)
         }
         else {

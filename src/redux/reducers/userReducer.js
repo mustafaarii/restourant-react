@@ -5,12 +5,14 @@ export default function (state=initialState.user,action){
 switch(action.type){
     case actionTypes.setUser :
         return action.payload
-    case actionTypes.decreaseWalley :
-        state.walley = state.walley - action.payload
-        return state
-    case actionTypes.increaseWalley :
-        state.walley = state.walley + action.payload
-        return state
+    case actionTypes.decreaseWallet :
+        state.wallet = state.wallet - action.payload
+        return {...state}
+    case actionTypes.increaseWallet :
+        state.wallet = state.wallet + action.payload
+        return {...state}
+    case actionTypes.setReceipt :
+        return {...state,receipt : action.payload}
     default:
         return state
 }

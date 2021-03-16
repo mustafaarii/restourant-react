@@ -22,6 +22,8 @@ export default function (state=initialState.basket,action) {
             state[index] = {...state[index],count:state[index].count+action.payload.count}
             newState = [...state]
             return newState;
+        case actionTypes.clearBasket :
+            return action.payload;
         default : return state
     }
 }

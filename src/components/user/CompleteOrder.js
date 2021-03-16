@@ -38,11 +38,11 @@ class CompleteOrder extends Component {
 
     increaseFoodCount = (food) => {
         const {actions,user} = this.props;
-        if (user.walley<food.price) {
+        if (user.wallet<food.price) {
             Alert.error("Bakiyeniz yeterli değildir, lütfen yükleme yapınız.")
         }else{ 
         actions.changeFoodCount(food.id,1);
-        actions.decreaseWalley(food.price);
+        actions.decreaseWallet(food.price);
         this.changeTotalPrice(food.price)
         // yiyeceğin sayısı arttırılır. kullanıcının parasından çekilir. totalPrice güncellenir.
         }
@@ -54,7 +54,7 @@ class CompleteOrder extends Component {
             Alert.error("Yiyecek sayısı daha fazla azaltılamaz.")
         }else{
             actions.changeFoodCount(food.id,-1);
-            actions.increaseWalley(food.price);
+            actions.increaseWallet(food.price);
             this.changeTotalPrice(-food.price)
             // yiyeceğin sayısı azaltılır. kullanıcının parası iade edilir. totalPrice güncellenir.
         }
@@ -64,14 +64,14 @@ class CompleteOrder extends Component {
         const {actions} = this.props;
         const price = food.price*food.count;
         actions.removeFood(food);
-        actions.increaseWalley(price);
+        actions.increaseWallet(price);
         this.changeTotalPrice(-price);
         // yiyecek sepetten kaldırılır. kullanıcının parası iade edilir. totalPrice state'i güncellenir.
     }
 
     completeOrder = () => {
         const token = sessionStorage.getItem("token");
-        const {basket} = this.props;
+        const {basket,actions} = this.props;
         let orders = [];
 
         basket.forEach(food=>{
@@ -89,7 +89,7 @@ class CompleteOrder extends Component {
             if(res.status===200) return res.json();
             if(res.status!==200) throw new Error();
         }).then(data=>{
-            if (data.status === "true") Alert.success(data.message);
+            if (data.status === "true") {Alert.success(data.message); actions.clearBasket();}
             else Alert.error(data.error);
         }).catch(res=>Alert.error("İşleminiz gerçekleştirilemedi. Daha sonra tekrar deneyin."))
     }
@@ -190,9 +190,10 @@ function mapDispatchToProps(dispatch) {
     return {
         actions:{
             changeFoodCount : bindActionCreators(basketActions.changeFoodCount,dispatch),
-            decreaseWalley : bindActionCreators(userActions.decWalley,dispatch),
-            increaseWalley : bindActionCreators(userActions.incWalley,dispatch),
-            removeFood: bindActionCreators(basketActions.removeFood, dispatch)
+            decreaseWallet : bindActionCreators(userActions.decWallet,dispatch),
+            increaseWallet : bindActionCreators(userActions.incWallet,dispatch),
+            removeFood: bindActionCreators(basketActions.removeFood, dispatch),
+            clearBasket : bindActionCreators(basketActions.clearBasket,dispatch)
 
         }
     }

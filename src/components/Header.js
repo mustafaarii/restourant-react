@@ -13,7 +13,7 @@ class Header extends Component {
   removeBasket = (food) => {
     const { actions } = this.props;
     actions.removeFood(food);
-    actions.increaseWalley(food.price * food.count)
+    actions.increaseWallet(food.price * food.count)
   }
 
   renderLoggedMenu = () => {
@@ -37,12 +37,15 @@ class Header extends Component {
 
       menuJSX.push(<li className="tv-drop-menu">
         <a data-toggle="dropdown" aria-expanded="false" className="tv-menu">
-          {user.name}  {user.walley}₺
+          {user.name}  {user.wallet}₺
         </a>
         <ul className="dropdown-menu tv-sub-menu" role="menu">
+          <li className><Link to="/add_money" className="tv-menu" data-toggle="dropdown">Bakiye Yükle</Link></li>
           <li className><Link to="/sit_table" className="tv-menu" data-toggle="dropdown">Masaya Otur</Link></li>
           <li className><Link to="/to_order" className="tv-menu" data-toggle="dropdown">Sipariş ver</Link></li>
           <li className><Link to="/my_orders" className="tv-menu" data-toggle="dropdown">Siparişlerim</Link></li>
+          <li className><Link to="/my_receipts" className="tv-menu" data-toggle="dropdown">Önceki Fişlerim</Link></li>
+          <li className><Link to="/get_off_thetable" className="tv-menu" data-toggle="dropdown">Masadan Kalk</Link></li>
         </ul>
       </li>
       )
@@ -131,7 +134,7 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: {
       removeFood: bindActionCreators(basketActions.removeFood, dispatch),
-      increaseWalley: bindActionCreators(userActions.incWalley, dispatch)
+      increaseWallet: bindActionCreators(userActions.incWallet, dispatch)
     }
   }
 }
