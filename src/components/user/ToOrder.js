@@ -174,9 +174,12 @@ class ToOrder extends Component {
     }
 
     handleSelect = (activePage) => {
+        // yiyecekleri boşa çekip 200ms gecikmeli istek atıyorum. Loader beklemek için
         const {selectedCategory} = this.state;
-        if(selectedCategory ===null) this.getAllFoodsFetch(activePage);
-        else this.getFoodsByCategory(selectedCategory.id,activePage);
+        this.setState({foods:null});
+
+        if(selectedCategory ===null) setTimeout(()=>this.getAllFoodsFetch(activePage),200);
+        else setTimeout(()=>this.getFoodsByCategory(selectedCategory.id,activePage),200);
         this.setState({activePage});
     }
 

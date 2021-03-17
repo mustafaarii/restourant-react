@@ -17,6 +17,7 @@ import MyOrders from './user/MyOrders';
 import AddMoney from './user/AddMoney';
 import GetOffTheTable from './user/GetOffTheTable';
 import MyReceipts from './user/MyReceipts';
+import FoodDetails from './user/FoodDetails';
 
 class RouteComponent extends Component {
 
@@ -27,21 +28,22 @@ class RouteComponent extends Component {
         if (token !== null && user.role.role === "ADMIN") { //eğer token varsa ve kullanıcı admin ise ulaşılabilecek routelar burada döner.
             return (
                 <Switch>
-                    <Route exact path="/tables"><Tables /></Route>
-                    <Route exact path="/categories"><Categories /></Route>
-                    <Route exact path="/foods"><Foods /></Route>
+                    <Route exact path="/tables" component={Tables}/>
+                    <Route exact path="/categories" component={Categories}/>
+                    <Route exact path="/foods" component={Foods}/>
                 </Switch>
             )
         } else if (token !== null && user.role.role === "USER") { //eğer token varsa ve kullanıcı user ise ulaşılabilecek routelar burada döner.
             return (
                 <Switch>
-                    <Route exact path="/sit_table"> <SitTable /> </Route>
-                    <Route exact path="/add_money"> <AddMoney /> </Route>
-                    <Route exact path="/to_order"><ToOrder/></Route>
-                    <Route exact path="/complete_order"><CompleteOrder/></Route>
-                    <Route exact path="/my_orders"><MyOrders/></Route>
-                    <Route exact path="/get_off_thetable"><GetOffTheTable/></Route>
-                    <Route exact path="/my_receipts"><MyReceipts/></Route>
+                    <Route exact path="/sit_table" component={SitTable}/>
+                    <Route exact path="/add_money" component={AddMoney}/> 
+                    <Route exact path="/to_order" component={ToOrder}/>
+                    <Route exact path="/complete_order" component={CompleteOrder}/>
+                    <Route exact path="/my_orders" component={MyOrders}/>
+                    <Route exact path="/get_off_thetable" component={GetOffTheTable}/>
+                    <Route exact path="/my_receipts" component={MyReceipts}/>
+                    <Route exact path="/food/:id" component={FoodDetails} />
                 </Switch>)
         }
         else {
@@ -53,9 +55,9 @@ class RouteComponent extends Component {
         return (
             <div>
                 <Switch>
-                    <Route exact path="/"> <Homepage /> </Route>
-                    <Route exact path="/register"> <Register /> </Route>
-                    <Route exact path="/login"><Login /></Route>
+                    <Route exact path="/" component={Homepage}/>
+                    <Route exact path="/register" component={Register}/>
+                    <Route exact path="/login" component={Login}/>
                 </Switch>
                 {this.renderLoginPath()}
             </div>
