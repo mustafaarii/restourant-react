@@ -7,7 +7,7 @@ import RouteComponent from './RouteComponent'
 
 class App extends Component {
 
-  componentWillMount() {
+  componentDidMount() {
       this.props.actions.setUser(); //ana component yüklenirken sunucuya kullanıcı bilgileri için istek atılır
   }
 

@@ -18,6 +18,7 @@ import AddMoney from './user/AddMoney';
 import GetOffTheTable from './user/GetOffTheTable';
 import MyReceipts from './user/MyReceipts';
 import FoodDetails from './user/FoodDetails';
+import addReservation from './user/addReservation';
 
 class RouteComponent extends Component {
 
@@ -44,6 +45,7 @@ class RouteComponent extends Component {
                     <Route exact path="/get_off_thetable" component={GetOffTheTable}/>
                     <Route exact path="/my_receipts" component={MyReceipts}/>
                     <Route exact path="/food/:id" component={FoodDetails} />
+                    <Route exact path="/add_reservation" component={addReservation} />
                 </Switch>)
         }
         else {

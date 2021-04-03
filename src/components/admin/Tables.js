@@ -31,7 +31,7 @@ export default class Tables extends Component {
         }).then(res => res.json()).then(data => {
             const {content,totalPages} = data;
             this.setState({ tables: content,activePage,totalPages });
-        }).catch(res => { console.log(res) })
+        }).catch(res => Alert.error("Bir hata oluştu, Daha sonra tekrar deneyin."))
     }
 
     addTable = (e) => {
@@ -49,14 +49,18 @@ export default class Tables extends Component {
             if (res.status === 200 || res.status===201) return res.json();
             else throw new Error();
         }).then(data => {
-            if (data.status == null) {
-                this.setState({ addResponse: { status: "false", errors: data.errors } })
-            } else if (data.status == "false") {
-                this.setState({ addResponse: { status: data.status, errors: [data.error] } })
-            } else {
-                this.setState({ addResponse: { status: data.status, message: data.message } });
-                this.getAllTables();
+            if (data.table) {
+                const {tables,activePage,totalPages} = this.state;
+                this.setState({ addResponse: { status: "true", message: "Masa başarıyla eklendi." } });
+               if(activePage===totalPages) this.setState({tables : [...tables,data.table]})
+            }else{
+                if (data.status == null) {
+                    this.setState({ addResponse: { status: "false", errors: data.errors } })
+                } else if (data.status == "false") {
+                    this.setState({ addResponse: { status: data.status, errors: [data.error] } })
+                }
             }
+            
         }).catch(res=>{Alert.error("Masa eklenemedi. Daha sonra tekrar deneyin.")})
     }
 

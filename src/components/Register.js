@@ -55,7 +55,7 @@ export default class Register extends Component {
                 this.setState({response:{status:data.status,message:data.message}})
             }
         })
-        .catch(res=> console.log(res.status))
+        .catch(res=> {})
 
     }
 

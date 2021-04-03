@@ -26,7 +26,7 @@ export default class Tables extends Component {
             },
         }).then(res => res.json()).then(data => {
             this.setState({ categories: data })
-        }).catch(res => { console.log(res) })
+        }).catch(res => { Alert.error("Bir hata oluştu. Daha sonra tekrar deneyin.") })
     }
 
     addCategory = (e) => {

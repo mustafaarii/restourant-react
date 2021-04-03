@@ -4,6 +4,7 @@ import {Alert} from 'rsuite'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as userActions from '../redux/actions/userActions'
+import { withRouter } from 'react-router-dom'
 
 class Login extends Component {
 
@@ -24,7 +25,7 @@ class Login extends Component {
         e.preventDefault();
         const url = apiURL+'login'
         const {email,password} = this.state;
-
+        const {history} = this.props;
         fetch(url,{
             method :"POST",
             headers: {
@@ -40,7 +41,9 @@ class Login extends Component {
           sessionStorage.setItem("token",data.token)
           this.props.actions.setUser();
           Alert.success("Başarıyla giriş yaptınız.")
+          window.location.replace("/");
         }).catch(err => {Alert.error("Kullanıcı adı veya şifre yanlış.")})
+      
     }
 
 
@@ -87,4 +90,4 @@ function  mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Login);
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(Login));

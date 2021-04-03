@@ -5,6 +5,7 @@ export default function (state=initialState.user,action){
 switch(action.type){
     case actionTypes.setUser :
         return action.payload
+        
     case actionTypes.decreaseWallet :
         state.wallet = state.wallet - action.payload
         return {...state}

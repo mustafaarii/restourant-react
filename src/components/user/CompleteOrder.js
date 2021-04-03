@@ -117,7 +117,7 @@ class CompleteOrder extends Component {
                     <div className="panel-body">
                         {
                             basket.map(food => (
-                                <div>
+                                <div key={food.id}>
                                     <div className="row">
                                         <div className="col-xs-2"><img className="img-responsive" src={apiURL + "files/" + food.image}/>
                                         </div>
@@ -149,7 +149,7 @@ class CompleteOrder extends Component {
                     <div className="panel-footer">
                         <div className="row text-center">
                             <div className="col-xs-9">
-                                <h4 className="text-right"><h6>Toplam :</h6> <strong>{totalPrice} ₺</strong></h4>
+                                <div className="text-right"><h6>Toplam :</h6> <h4><strong>{totalPrice} ₺</strong></h4></div>
                             </div>
                             <div className="col-xs-3">
                                 <button type="button" onClick={this.completeOrder} className="btn btn-success btn-block">

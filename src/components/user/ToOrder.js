@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux'
 import * as basketActions from '../../redux/actions/basketActions'
 import * as userActions from '../../redux/actions/userActions'
 import { withRouter } from 'react-router-dom'
+import { Link } from 'react-router-dom/cjs/react-router-dom.min'
 
 class ToOrder extends Component {
 
@@ -49,7 +50,7 @@ class ToOrder extends Component {
             },
         }).then(res => res.json()).then(data => {
             this.setState({ categories: data })
-        }).catch(res => { console.log(res) })
+        }).catch(res => { Alert.error("Kategoriler yüklenirken hata oluştu..") })
     }
 
     getAllFoods = () => {
@@ -69,23 +70,24 @@ class ToOrder extends Component {
                 const { content, totalPages } = data;
                 this.setState({ foods: content, totalPages, activePage })
             })
-            .catch(res => console.log(res))
+            .catch(res => Alert.error("Yemekler yüklenirken hata oluştu.."))
     }
 
-    getFoodsByCategory = (categoryId,activePage=1) => {
+    getFoodsByCategory = (categoryId, activePage = 1) => {
         // id'ye göre yiyecekler çekiliyor
         const token = sessionStorage.getItem("token");
-        fetch(apiURL + "user/foods/" + categoryId +"?page="+activePage, {
+        fetch(apiURL + "user/foods/" + categoryId + "?page=" + activePage, {
             headers: {
                 Authorization: "Bearer " + token
             }
         })
             .then(res => res.json())
             .then(data => {
-                const {content,totalPages} = data;
-                this.setState({ foods: content,totalPages,activePage })}      
-                )
-            .catch(res => console.log(res))
+                const { content, totalPages } = data;
+                this.setState({ foods: content, totalPages, activePage })
+            }
+            )
+            .catch(res => Alert.error("Bir hata oluştu. Daha sonra tekrar deneyin."))
     }
 
     changedSelectedCategory = (category) => {
@@ -155,15 +157,15 @@ class ToOrder extends Component {
         const { categories } = this.state;
         let categoriesJSX = [];
         categoriesJSX.push(
-            <div className="categoryButton">
-                <Button key={999} className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.setState({selectedCategory:null}); this.getAllFoods() }} > Tümü</Button>
+            <div className="categoryButton" key="all">
+                <Button className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.setState({ selectedCategory: null }); this.getAllFoods() }} > Tümü</Button>
             </div>
         )
         if (categories !== null) {
             categories.map(category => {
                 categoriesJSX.push(
-                    <div className="categoryButton">
-                        <Button key={category.id} className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.changedSelectedCategory(category) }}> {category.name}</Button>
+                    <div className="categoryButton" key={category.id}>
+                        <Button className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.changedSelectedCategory(category) }}> {category.name}</Button>
                     </div>
                 )
             })
@@ -175,12 +177,12 @@ class ToOrder extends Component {
 
     handleSelect = (activePage) => {
         // yiyecekleri boşa çekip 200ms gecikmeli istek atıyorum. Loader beklemek için
-        const {selectedCategory} = this.state;
-        this.setState({foods:null});
+        const { selectedCategory } = this.state;
+        this.setState({ foods: null });
 
-        if(selectedCategory ===null) setTimeout(()=>this.getAllFoodsFetch(activePage),200);
-        else setTimeout(()=>this.getFoodsByCategory(selectedCategory.id,activePage),200);
-        this.setState({activePage});
+        if (selectedCategory === null) setTimeout(() => this.getAllFoodsFetch(activePage), 200);
+        else setTimeout(() => this.getFoodsByCategory(selectedCategory.id, activePage), 200);
+        this.setState({ activePage });
     }
 
     renderFoods = () => {
@@ -189,43 +191,49 @@ class ToOrder extends Component {
         if (foods !== null) {
             return (
                 <div>
-            <div className="foods">
-                {
-                    foods.map(food => (<div className="tv-menu-block">
-                        <div className="row">
-                            <div className="col-md-3 col-sm-3 col-xs-12">
-                                <div className="tv-menu-img">
-                                    <img src={apiURL + "files/" + food.image} style={{ with: "50px", height: "50px" }}></img>
-                                </div>
-                            </div>
-                            <div className="col-md-9 col-sm-9 col-xs-12">
-                                <div className="tv-menu-title">
-                                    <h4>{food.foodName}</h4>
-                                    <span><span class="badge badge-pill badge-success background-info">{food.price} ₺</span></span>
-                                    <p>Kategori : {food.category.name}</p>
-                                    <span><Button onClick={() => this.selectItem(food)}><RiShoppingBasketLine /> Sepete Ekle</Button></span>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="foods">
+                        {
+                            foods.map(food => {
+                                const foodLink = "/food/" + food.id;
+                                return (
+                                    <div className="tv-menu-block" key={food.id}>
+                                        <div className="row">
+                                            <div className="col-md-3 col-sm-3 col-xs-12">
+                                                <div className="tv-menu-img">
+                                                    <img src={apiURL + "files/" + food.image} style={{ with: "50px", height: "50px" }}></img>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-9 col-sm-9 col-xs-12">
+                                                <div className="tv-menu-title">
+                                                    <h4><Link to={foodLink}>{food.foodName}</Link></h4>
+                                                    <span><span className="badge badge-pill badge-success background-info">{food.price} ₺</span></span>
+                                                    <p>Kategori : {food.category.name}</p>
+                                                    <span><Button onClick={() => this.selectItem(food)}><RiShoppingBasketLine /> Sepete Ekle</Button></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+
+                            })
+
+                        }
+                        <br />
+
                     </div>
-                    ))
-                }
-               <br/>
-                
-            </div>
-            <center>
-                    <Pagination
-                        prev
-                        last
-                        next
-                        first
-                        size="lg"
-                        pages={this.state.totalPages}
-                        activePage={this.state.activePage}
-                        onSelect={this.handleSelect}
-                    />
-                </center>
-            </div>
+                    <center>
+                        <Pagination
+                            prev
+                            last
+                            next
+                            first
+                            size="lg"
+                            pages={this.state.totalPages}
+                            activePage={this.state.activePage}
+                            onSelect={this.handleSelect}
+                        />
+                    </center>
+                </div>
             )
         } else {
             return (<Loader center content="Lütfen bekleyin..." />);

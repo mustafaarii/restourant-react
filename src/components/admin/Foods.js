@@ -30,7 +30,7 @@ export default class Foods extends Component {
         })
             .then(res => res.json())
             .then(data => this.setState({ categories: data }))
-            .catch(res => console.log(res))
+            .catch(res => Alert.error("Bir hata oluştu. Daha sonra tekrar deneyin."))
     }
 
     getFoods = (activePage=1) => {
@@ -46,7 +46,7 @@ export default class Foods extends Component {
             this.setState({foods:content,totalPages,activePage})
         
         })
-        .catch(res=>console.log(res))
+        .catch(res=> Alert.error("Bir hata oluştu. Daha sonra tekrar deneyin."))
     }
 
     addfood = (e) => {

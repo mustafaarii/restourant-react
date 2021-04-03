@@ -2267,6 +2267,15 @@ label {
     margin-left: 10%;
 }
 
+.reserved img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 50%;
+    width: 80%;
+    margin-left: 10%;
+}
+
 
 .nextButton{
     float: right;
@@ -2446,4 +2455,21 @@ label {
 
 .mb-100 {
     margin-bottom: 100px
+}
+
+.fullreservations{
+display: flex;
+width: 100%;
+justify-content: flex-start;
+flex-wrap: wrap;
+}
+
+.reservation{
+width: 20%;
+background-color: darkred;
+color: white;
+margin-left: 5%;
+margin-top: 2%;
+padding: 10px;
+border-radius: 15px;
 }
