@@ -1,6 +1,32 @@
 import React, { Component } from 'react'
 
+import apiURL from './apiURL'
+import turkishDateFormat from '../helper/turkishDateFormat'
+
 export default class Homepage extends Component {
+
+    state ={
+      sittingInfos : null
+    }
+
+    componentDidMount() {
+      this.getSittingTime();
+    }
+    
+
+    getSittingTime = () => {
+      const token = sessionStorage.getItem("token");
+      fetch(apiURL+"user/get_sittingtime",{
+        headers : {
+          Authorization : "Bearer " + token
+        }
+      })
+      .then(res => {
+        if(res.status === 200) return res.json()
+      })
+      .then(data=>this.setState({sittingInfos:data}))
+    }
+
     renderBanner(){
         return (
             <div id="banner">
@@ -14,6 +40,54 @@ export default class Homepage extends Component {
           </div>
         </div>
         )
+    }
+
+    renderSittingInfos =()=>{
+      const {sittingInfos} = this.state;
+      if (sittingInfos != null) {
+        return (
+          <div className="tv-clients-banner tv-section-padding-70" style={{background: "black"}}>
+            <div className="container">
+              <div className="row">
+                <div className="tv-clients-info">
+                  <p>Kişisel Bilgileriniz</p><br/>
+                  <div className="border" />
+                </div>
+                <div className="col-md-3 col-sm-3 col-xs-12">
+                  <div className="tv-clients-counter">
+                    <p className="counter" data-slno={1} data-min={0} data-max={250} data-delay=".9" data-increment={1}>
+                      {Math.floor(sittingInfos.totalMinute / sittingInfos.count)} <small>dk</small></p>
+                    <h4>Ortalama Oturma Süresi</h4>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-3 col-xs-12">
+                  <div className="tv-clients-counter">
+                    <p className="counter" data-slno={1} data-min={0} data-max={8648} data-delay=".9" data-increment={1}>
+                      {sittingInfos.totalMinute}<small> dk</small></p>
+                    <h4>Toplam Oturma Süresi</h4>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-3 col-xs-12">
+                  <div className="tv-clients-counter">
+                    <p className="counter" data-slno={1} data-min={0} data-max={45} data-delay=".9" data-increment={1}>
+                      {sittingInfos.count}</p>
+                    <h4>Toplam Oturma Sayısı</h4>
+                  </div>
+                </div>
+                <div className="col-md-3 col-sm-3 col-xs-12">
+                  <div className="tv-clients-counter">
+                    <p className="counter" data-slno={1} data-min={0} data-max={95} data-delay=".9" data-increment={1}>
+                      {turkishDateFormat(new Date(sittingInfos.endTime)).slice(0,13)}</p>
+                    <h4>Son Ziyaret Tarihi</h4>
+                  </div>
+                </div>
+                </div>
+            </div>
+          </div>
+    
+        )
+      }
+        
     }
 
     renderSpecial(){
@@ -67,6 +141,7 @@ export default class Homepage extends Component {
         return (
             <div>
                 {this.renderBanner()}
+                {this.renderSittingInfos()}
                 {this.renderSpecial()}
             </div>
         )

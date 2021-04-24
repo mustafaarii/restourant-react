@@ -48,11 +48,15 @@ class Header extends Component {
         </a>
         <ul className="dropdown-menu tv-sub-menu" role="menu">
           <li><Link to="/add_money" className="tv-menu" data-toggle="dropdown">Bakiye Yükle</Link></li>
-          <li><Link to="/add_reservation" className="tv-menu" data-toggle="dropdown">Rezervasyon Yap</Link></li>
           <li><Link to="/sit_table" className="tv-menu" data-toggle="dropdown">Masaya Otur</Link></li>
+          <hr/>
+          <li><Link to="/add_reservation" className="tv-menu" data-toggle="dropdown">Rezervasyon Yap</Link></li>
+          <li><Link to="/my_reservations" className="tv-menu" data-toggle="dropdown">Rezervasyonlarım</Link></li>
+          <hr/>
           <li><Link to="/to_order" className="tv-menu" data-toggle="dropdown">Sipariş ver</Link></li>
           <li><Link to="/my_orders" className="tv-menu" data-toggle="dropdown">Siparişlerim</Link></li>
           <li><Link to="/my_receipts" className="tv-menu" data-toggle="dropdown">Önceki Fişlerim</Link></li>
+          <hr/>
           <li><Link to="/get_off_thetable" className="tv-menu" data-toggle="dropdown">Masadan Kalk</Link></li>
         </ul>
       </li>

@@ -41,7 +41,7 @@ class Login extends Component {
           sessionStorage.setItem("token",data.token)
           this.props.actions.setUser();
           Alert.success("Başarıyla giriş yaptınız.")
-          window.location.replace("/");
+          history.push("/")
         }).catch(err => {Alert.error("Kullanıcı adı veya şifre yanlış.")})
       
     }

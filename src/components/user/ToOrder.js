@@ -15,8 +15,10 @@ class ToOrder extends Component {
         modalStatus: false,
         categories: null,
         foods: null,
+        operationNumber: 1, // 1 ise tüm yiyecekler, 2 ise kategoriye göre arananlar, 3 ise kelimeye göre arananlar
         selectedCategory: null,
         selectedItem: null,
+        searchedWord: "",
         itemCount: 1,
         activePage: null,
         totalPages: null
@@ -54,7 +56,7 @@ class ToOrder extends Component {
     }
 
     getAllFoods = () => {
-        this.setState({ selectedCategory: null, foods: null }) //loading efekti için state'teki bilgileri null yapıyorum
+        this.setState({ selectedCategory: null, foods: null,operationNumber:1 }) //loading efekti için state'teki bilgileri null yapıyorum
         setTimeout(this.getAllFoodsFetch, 1000)
     }
 
@@ -68,7 +70,7 @@ class ToOrder extends Component {
             .then(res => res.json())
             .then(data => {
                 const { content, totalPages } = data;
-                this.setState({ foods: content, totalPages, activePage })
+                this.setState({ foods: content, totalPages, activePage})
             })
             .catch(res => Alert.error("Yemekler yüklenirken hata oluştu.."))
     }
@@ -90,6 +92,24 @@ class ToOrder extends Component {
             .catch(res => Alert.error("Bir hata oluştu. Daha sonra tekrar deneyin."))
     }
 
+    getFoodsBySearch = (activePage = 1) => {
+        const token = sessionStorage.getItem("token");
+        const { searchedWord } = this.state;
+        if (searchedWord !== null) {
+            fetch(apiURL + "user/search_food?s=" + searchedWord + "&page=" + activePage, {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const { content, totalPages } = data;
+                    this.setState({ foods: content, totalPages, activePage })
+                })
+                .catch(res => Alert.error("Arama yapılamadı, daha sonra tekrar deneyiniz."))
+        }
+    }
+
     changedSelectedCategory = (category) => {
         // seçili kategori değiştiğinde önce yiyecekler boşaltılıyor daha sonra istek atılıyor. Son olarak seçilen kategori state'e yazılıyor.
         this.setState({ foods: null })
@@ -98,7 +118,6 @@ class ToOrder extends Component {
     }
 
     selectItem = (food) => {
-
         this.setState({ modalStatus: true, selectedItem: food })
     }
 
@@ -156,32 +175,33 @@ class ToOrder extends Component {
     renderCategories = () => {
         const { categories } = this.state;
         let categoriesJSX = [];
-        categoriesJSX.push(
-            <div className="categoryButton" key="all">
-                <Button className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.setState({ selectedCategory: null }); this.getAllFoods() }} > Tümü</Button>
-            </div>
-        )
         if (categories !== null) {
+            categoriesJSX.push(
+                <div className="categoryButton" key="all">
+                    <Button className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.setState({ selectedCategory: null,operationNumber: 2 }); this.getAllFoods() }} > Tümü</Button>
+                </div>
+            );
             categories.map(category => {
                 categoriesJSX.push(
                     <div className="categoryButton" key={category.id}>
-                        <Button className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.changedSelectedCategory(category) }}> {category.name}</Button>
+                        <Button className=" btn btn-mod btn-border btn-medium btn-circle" onClick={() => { this.changedSelectedCategory(category); this.setState({operationNumber:2}) }}> {category.name}</Button>
                     </div>
                 )
             })
             return categoriesJSX;
         } else {
-
+            return null;
         }
     }
 
     handleSelect = (activePage) => {
         // yiyecekleri boşa çekip 200ms gecikmeli istek atıyorum. Loader beklemek için
-        const { selectedCategory } = this.state;
+        const { operationNumber, selectedCategory } = this.state;
         this.setState({ foods: null });
 
-        if (selectedCategory === null) setTimeout(() => this.getAllFoodsFetch(activePage), 200);
-        else setTimeout(() => this.getFoodsByCategory(selectedCategory.id, activePage), 200);
+        if (operationNumber === 1) setTimeout(() => this.getAllFoodsFetch(activePage), 200);
+        else if (operationNumber === 2) setTimeout(() => this.getFoodsByCategory(selectedCategory.id, activePage), 200);
+        else if (operationNumber === 3) setTimeout(() => this.getFoodsBySearch(activePage), 200);
         this.setState({ activePage });
     }
 
@@ -241,14 +261,25 @@ class ToOrder extends Component {
     }
 
     render() {
+        const {selectedCategory,searchedWord,operationNumber} = this.state;
         return (
             <div className="container" style={{ marginTop: "10%" }}>
+                <div className="searchDiv">
+                    <div className="form-inline my-2 my-lg-0">
+                        <input onChange={(e) => { this.setState({ searchedWord: e.target.value }) }} className="form-control mr-sm-2" type="search" placeholder="Aranacak kelime veya cümle.." aria-label="Search" />{" "}
+                        <Button style={{backgroundColor:"darkred", color : "white"}} className="btn btn-outline-success my-2 my-sm-0" onClick={() => {this.getFoodsBySearch(); this.setState({operationNumber: 3})}}>Yemeklerde Ara</Button>
+                    </div> <br />
+                </div>
                 <div className="categoryButtonsDiv">
                     {this.renderCategories()}
                 </div>
                 <div className="col-md-12 col-sm-12 col-xs-12">
                     <div className="tv-menu-feautre text-center">
-                        <h4>{this.state.selectedCategory !== null ? this.state.selectedCategory.name : "Tüm Yiyecekler "}</h4>
+                        <h4>
+                            {operationNumber == 1 ? "Tüm Yiyecekler " : null}  
+                            {operationNumber == 2 ? selectedCategory.name : null}
+                            {operationNumber == 3 ? "'"+searchedWord+"' ile ilgili yemekler" : null }
+                        </h4>
                     </div>
 
                 </div>

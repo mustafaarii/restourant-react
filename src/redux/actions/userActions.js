@@ -18,7 +18,13 @@ export function setUser() {
             headers : {
                 Authorization: 'Bearer ' + token
             }
-        }).then(res=>res.json()).then(data=>dispath(setUserSuccess(data)))
+        })
+        .then(res=>{
+            if(res.status===200) return res.json();
+            else throw new Error();
+        })
+        .then(data=>dispath(setUserSuccess(data)))
+        .catch(err=>dispath(setUserSuccess({role:{role:null},email:null,wallet:null,name:null})))
     }
 }
 

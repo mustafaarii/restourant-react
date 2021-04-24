@@ -19,49 +19,53 @@ import GetOffTheTable from './user/GetOffTheTable';
 import MyReceipts from './user/MyReceipts';
 import FoodDetails from './user/FoodDetails';
 import addReservation from './user/addReservation';
+import myReservations from './user/myReservations';
+import NotFound from './NotFound';
 
 class RouteComponent extends Component {
 
     renderLoginPath = () => {
         const token = sessionStorage.getItem("token");
         const {user} = this.props;
-
+        const routes = [];
         if (token !== null && user.role.role === "ADMIN") { //eğer token varsa ve kullanıcı admin ise ulaşılabilecek routelar burada döner.
-            return (
-                <Switch>
-                    <Route exact path="/tables" component={Tables}/>
-                    <Route exact path="/categories" component={Categories}/>
-                    <Route exact path="/foods" component={Foods}/>
-                </Switch>
-            )
+   
+                routes.push(<Route exact path="/tables" component={Tables}/>)
+                routes.push(<Route exact path="/categories" component={Categories}/>)
+                routes.push(<Route exact path="/foods" component={Foods}/>)
+
         } else if (token !== null && user.role.role === "USER") { //eğer token varsa ve kullanıcı user ise ulaşılabilecek routelar burada döner.
-            return (
-                <Switch>
-                    <Route exact path="/sit_table" component={SitTable}/>
-                    <Route exact path="/add_money" component={AddMoney}/> 
-                    <Route exact path="/to_order" component={ToOrder}/>
-                    <Route exact path="/complete_order" component={CompleteOrder}/>
-                    <Route exact path="/my_orders" component={MyOrders}/>
-                    <Route exact path="/get_off_thetable" component={GetOffTheTable}/>
-                    <Route exact path="/my_receipts" component={MyReceipts}/>
-                    <Route exact path="/food/:id" component={FoodDetails} />
-                    <Route exact path="/add_reservation" component={addReservation} />
-                </Switch>)
+           
+            routes.push(<Route exact path="/sit_table" component={SitTable}/>);
+            routes.push(<Route exact path="/add_money" component={AddMoney}/> )
+            routes.push(<Route exact path="/to_order" component={ToOrder}/>)
+            routes.push(<Route exact path="/complete_order" component={CompleteOrder}/>)
+            routes.push(<Route exact path="/my_orders" component={MyOrders}/>)
+            routes.push(<Route exact path="/get_off_thetable" component={GetOffTheTable}/>)
+            routes.push(<Route exact path="/my_receipts" component={MyReceipts}/>)
+            routes.push(<Route exact path="/food/:id" component={FoodDetails} />)
+            routes.push(<Route exact path="/add_reservation" component={addReservation} />)
+            routes.push(<Route exact path="/my_reservations" component={myReservations} />)
+  
         }
         else {
             return null;
         }
-
+        return routes;
     }
+   
     render() {
+    
         return (
             <div>
                 <Switch>
                     <Route exact path="/" component={Homepage}/>
                     <Route exact path="/register" component={Register}/>
                     <Route exact path="/login" component={Login}/>
+                    {this.renderLoginPath()}
+                    <Route component={NotFound}></Route>
                 </Switch>
-                {this.renderLoginPath()}
+
             </div>
         )
     }
