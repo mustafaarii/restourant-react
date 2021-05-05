@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { Table, Loader,Pagination } from 'rsuite'
+import { Table, Loader, Pagination } from 'rsuite'
 import apiURL from '../apiURL'
 
 const { Column, HeaderCell, Cell } = Table;
 export default class MyReceipts extends Component {
 
   state = {
-    receipts: [],
+    receipts: null,
     totalPages: null,
     activePage: 1
   }
@@ -23,54 +23,63 @@ export default class MyReceipts extends Component {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token
       }
-    }).then(res => res.json()).then(data => this.setState({ receipts: data.content, activePage, totalPages: data.totalPages }));
+    }).then(res => res.json()).then(data => this.setState({ receipts: data.content, activePage, totalPages: data.totalPages }, () => { console.log(this.state) }));
   }
 
   handleSelect = (activePage) => {
-      this.getMyReceipts(activePage);
+    this.getMyReceipts(activePage);
   }
 
   renderTable = () => {
     const { receipts } = this.state;
-    if (receipts.length !== 0) {
-      return (
-        <div>
-          <Table
-            virtualized
-            height={400}
-            data={receipts}
-            style={{ zIndex: "0" }}
-            
-          >
-            <Column width={150} align="center">
-              <HeaderCell>Id</HeaderCell>
-              <Cell dataKey="id" />
-            </Column>
 
-            <Column width={200}>
-              <HeaderCell>Tarih</HeaderCell>
-              <Cell dataKey="date" />
-            </Column>
+    if (receipts !== null) {
+      if (receipts.length !== 0) {
+        return (
+          <div>
+            <Table
+              virtualized
+              height={400}
+              data={receipts}
+              style={{ zIndex: "0" }}
 
-            <Column width={230}>
-              <HeaderCell>Toplam Ödenen Fiyat</HeaderCell>
-              <Cell dataKey="totalPrice" />
-            </Column>
-          </Table>
-          <hr />
-          <Pagination
-            prev
-            last
-            next
-            first
-            size="lg"
-            pages={this.state.totalPages}
-            activePage={this.state.activePage}
-            onSelect={this.handleSelect}
-          />
-        </div> )
+            >
+              <Column width={150} align="center">
+                <HeaderCell>Id</HeaderCell>
+                <Cell dataKey="id" />
+              </Column>
 
-        } else {
+              <Column width={200}>
+                <HeaderCell>Tarih</HeaderCell>
+                <Cell dataKey="date" />
+              </Column>
+
+              <Column width={230}>
+                <HeaderCell>Toplam Ödenen Fiyat</HeaderCell>
+                <Cell dataKey="totalPrice" />
+              </Column>
+            </Table>
+            <hr />
+            <Pagination
+              prev
+              last
+              next
+              first
+              size="lg"
+              pages={this.state.totalPages}
+              activePage={this.state.activePage}
+              onSelect={this.handleSelect}
+            />
+          </div>)
+      }else{
+        return (
+          <div className="alert alert-danger" style={{ width: "30%", marginLeft: "35%" }} role="alert">
+               Eski bir fişiniz bulunmuyor..
+            </div>
+        )
+      }
+
+    } else {
       return (<Loader center content="İşleminiz gerçekleştiriliyor, lütfen bekleyin..." />)
     }
   }

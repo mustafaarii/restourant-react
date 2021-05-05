@@ -48,6 +48,7 @@ export default class Homepage extends Component {
         return (
           <div className="tv-clients-banner tv-section-padding-70" style={{background: "black"}}>
             <div className="container">
+              
               <div className="row">
                 <div className="tv-clients-info">
                   <p>Kişisel Bilgileriniz</p><br/>
@@ -56,7 +57,7 @@ export default class Homepage extends Component {
                 <div className="col-md-3 col-sm-3 col-xs-12">
                   <div className="tv-clients-counter">
                     <p className="counter" data-slno={1} data-min={0} data-max={250} data-delay=".9" data-increment={1}>
-                      {Math.floor(sittingInfos.totalMinute / sittingInfos.count)} <small>dk</small></p>
+                      {sittingInfos.count !==0 ? Math.floor(sittingInfos.totalMinute / sittingInfos.count) : 0} <small>dk</small></p>
                     <h4>Ortalama Oturma Süresi</h4>
                   </div>
                 </div>
@@ -77,7 +78,7 @@ export default class Homepage extends Component {
                 <div className="col-md-3 col-sm-3 col-xs-12">
                   <div className="tv-clients-counter">
                     <p className="counter" data-slno={1} data-min={0} data-max={95} data-delay=".9" data-increment={1}>
-                      {turkishDateFormat(new Date(sittingInfos.endTime)).slice(0,13)}</p>
+                      {sittingInfos.count !== 0 ? turkishDateFormat(new Date(sittingInfos.endTime)).slice(0,13) : "--"}</p>
                     <h4>Son Ziyaret Tarihi</h4>
                   </div>
                 </div>
@@ -140,6 +141,7 @@ export default class Homepage extends Component {
     render() {
         return (
             <div>
+              
                 {this.renderBanner()}
                 {this.renderSittingInfos()}
                 {this.renderSpecial()}

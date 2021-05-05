@@ -57,7 +57,7 @@ export default class Tables extends Component {
                 if (data.status == null) {
                     this.setState({ addResponse: { status: "false", errors: data.errors } })
                 } else if (data.status == "false") {
-                    this.setState({ addResponse: { status: data.status, errors: [data.error] } })
+                    this.setState({ addResponse: { status: data.status, errors: [data.error] } },()=>{console.log(data.error)})
                 }
             }
             
