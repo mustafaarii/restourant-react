@@ -21,6 +21,7 @@ import FoodDetails from './user/FoodDetails';
 import addReservation from './user/addReservation';
 import myReservations from './user/myReservations';
 import NotFound from './NotFound';
+import Comments from './admin/Comments';
 
 class RouteComponent extends Component {
 
@@ -33,6 +34,7 @@ class RouteComponent extends Component {
                 routes.push(<Route exact path="/tables" component={Tables}/>)
                 routes.push(<Route exact path="/categories" component={Categories}/>)
                 routes.push(<Route exact path="/foods" component={Foods}/>)
+                routes.push(<Route exact path="/comments" component={Comments}></Route>)
 
         } else if (token !== null && user.role.role === "USER") { //eğer token varsa ve kullanıcı user ise ulaşılabilecek routelar burada döner.
            

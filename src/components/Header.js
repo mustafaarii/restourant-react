@@ -35,6 +35,7 @@ class Header extends Component {
             <li><Link to="/tables" className="tv-menu" data-toggle="dropdown">Masalar</Link></li>
             <li><Link to="/categories" className="tv-menu" data-toggle="dropdown">Kategoriler</Link></li>
             <li><Link to="/foods" className="tv-menu" data-toggle="dropdown">Yemekler</Link></li>
+            <li><Link to="/comments" className="tv-menu" data-toggle="dropdown">Yorumlar</Link></li>
           </ul>
         </li>
       )
@@ -140,7 +141,7 @@ class Header extends Component {
       .then(data => {
         if (data.status === "false") this.setState({ errorMessage: data.error });
         else if (data.status === "true") {
-          Alert.success("Yorumunuz başarıyla eklendi.")
+          Alert.success("Yorumunuz tarafımıza iletildi.")
           this.setState({ showModal: false, comment: "" })
         }
       })
