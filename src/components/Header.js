@@ -24,7 +24,7 @@ class Header extends Component {
 
   renderLoggedMenu = () => {
     const token = sessionStorage.getItem("token");
-    const { user } = this.props;
+    const { user,history } = this.props;
     let menuJSX = [];
 
     if (token !== null && user.role.role === "ADMIN") {
@@ -36,11 +36,12 @@ class Header extends Component {
             <li><Link to="/categories" className="tv-menu" data-toggle="dropdown">Kategoriler</Link></li>
             <li><Link to="/foods" className="tv-menu" data-toggle="dropdown">Yemekler</Link></li>
             <li><Link to="/comments" className="tv-menu" data-toggle="dropdown">Yorumlar</Link></li>
+            <li><Link to="/employees" className="tv-menu" data-toggle="dropdown">Çalışanlar</Link></li>
           </ul>
         </li>
       )
       menuJSX.push(
-        <li><Link onClick={() => { sessionStorage.removeItem("token") }} className="tv-menu" data-toggle="dropdown">Çıkış Yap</Link></li>
+        <li><Link onClick={() => { sessionStorage.removeItem("token"); history.push("/login") }} className="tv-menu" data-toggle="dropdown">Çıkış Yap</Link></li>
       )
       return menuJSX;
     }
@@ -102,7 +103,7 @@ class Header extends Component {
           </li>)
       }
       menuJSX.push(
-        <li key="cikis"><Link onClick={() => { sessionStorage.removeItem("token") }} className="tv-menu" data-toggle="dropdown">Çıkış Yap</Link></li>
+        <li key="cikis"><Link onClick={() => { sessionStorage.removeItem("token"); history.push("/login") }} className="tv-menu" data-toggle="dropdown">Çıkış Yap</Link></li>
       )
 
       menuJSX.push(
