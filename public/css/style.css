@@ -2527,3 +2527,17 @@ border-radius: 15px;
     width: 75%;
   }
 
+.employees{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.employee{
+width: 20%;
+background-color: darkred;
+color: white;
+margin-left: 5%;
+margin-top: 2%;
+padding: 10px;
+border-radius: 15px;
+}

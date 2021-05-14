@@ -4,19 +4,19 @@ import renderError from '../../helper/renderError'
 import { Pagination, Loader, Modal, Button, Icon, Alert, ButtonToolbar, Notification } from 'rsuite'
 export default class Employees extends Component {
 
-    state={
-        employees : null,
-        activePage : null,
-        totalPages : null,
-        show : false,
-        employeeName : "",
-        addResponse : null,
+    state = {
+        employees: null,
+        activePage: null,
+        totalPages: null,
+        show: false,
+        employeeName: "",
+        addResponse: null,
     }
 
     componentDidMount() {
-        setTimeout( this.getEmployees,1000);
+        setTimeout(this.getEmployees, 1000);
     }
-    
+
     getEmployees = (activePage = 1) => {
         const token = sessionStorage.getItem("token");
         fetch(apiURL + "admin/all_employees?page=" + activePage, {
@@ -30,58 +30,135 @@ export default class Employees extends Component {
     }
 
     addEmployee = () => {
-        const {employeeName} = this.state;
+        const { employeeName } = this.state;
         const token = sessionStorage.getItem("token");
-        
-        fetch(apiURL+"admin/add_employee",{
-            method : "POST",
-            headers : {
-                Authorization : "Bearer "+token,
-                "Content-Type" : "application/json"
+
+        fetch(apiURL + "admin/add_employee", {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
             },
-            body : JSON.stringify({name:employeeName})
+            body: JSON.stringify({ name: employeeName })
         })
-        .then(res=>res.json())
-        .then(data=>{
-            if (data.status == "false") {
-                this.setState({ addResponse: { status: data.status, errors: [data.error] } })
-            } else {
-                this.setState({ addResponse: { status: data.status, message: data.message } });
-                this.getEmployees();
+            .then(res => res.json())
+            .then(data => {
+                if (data.status == "false") {
+                    this.setState({ addResponse: { status: data.status, errors: [data.error] } })
+                } else {
+                    this.setState({ addResponse: { status: data.status, message: data.message } });
+                    this.getEmployees();
+                }
+            })
+            .catch(err => Alert.error("İşleminiz gerçekleştirilemedi, daha sonra tekrar deneyin."))
+    }
+
+    deleteEmployee = id => {
+        const token = sessionStorage.getItem("token");
+
+        fetch(apiURL + "admin/delete_employee?id=" + id, {
+            headers: {
+                Authorization: "Bearer " + token
             }
         })
-        .catch(err=>Alert.error("İşleminiz gerçekleştirilemedi, daha sonra tekrar deneyin."))
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "true") {
+                    this.setState({ employees: this.state.employees.filter(employee => employee.id !== id) })
+                    Alert.success(data.message);
+                } else if (data.status === "false") {
+                    Alert.error(data.error);
+                }
+            })
+            .catch(err => Alert.error("İşleminiz gerçekleştirilemedi, daha sonra tekrar deneyin."))
+    }
+
+    resetTotalTip = id => {
+        const token = sessionStorage.getItem("token");
+
+        fetch(apiURL + "admin/reset_totaltip?id=" + id, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "true") {
+                    Alert.success(data.message);
+                    this.getEmployees();
+                } else if (data.status === "false") {
+                    Alert.error(data.error);
+                }
+            })
+            .catch(err => Alert.error("İşleminiz gerçekleştirilemedi, daha sonra tekrar deneyin."))
     }
 
     handleSelect = (activePage) => {
         this.getEmployees(activePage);
     }
 
-    showModal = () => {this.setState({show:true})}
-    closeModal = () => {this.setState({show:false,addResponse:null})}
-    changedInput = e => {this.setState({employeeName:e.target.value},()=>console.log(this.state.employeeName))}
+    showModal = () => { this.setState({ show: true }) }
+    closeModal = () => { this.setState({ show: false, addResponse: null }) }
+    changedInput = e => { this.setState({ employeeName: e.target.value }) }
+
+    renderNotification = (operation, employeeId) => {
+        let message, func = () => { };
+        if (operation === 1) {
+            message = "Gerçekten çalışanı silmek istiyor musunuz ?";
+            func = () => { this.deleteEmployee(employeeId); Notification.close() };
+        }
+        else if (operation === 2) {
+            message = "Çalışanın bahşişini sıfırlamak istediğinize emin misiniz ?";
+            func = () => {this.resetTotalTip(employeeId); Notification.close()}
+        }
+        else return false;
+
+        Notification.open({
+            title: 'İşleminizi Onaylayın',
+            duration: 10000,
+            description: (
+                <div>
+                    <p>{message}</p>
+                    <ButtonToolbar>
+                        <Button
+                            onClick={func}
+                        >
+                            Evet
+                  </Button>
+                        <Button
+                            onClick={() => {
+                                Notification.close();
+                            }}
+                        >
+                            İptal
+                  </Button>
+                    </ButtonToolbar>
+                </div>
+            )
+        });
+    }
 
     renderModal = () => {
-        const {show,addResponse} = this.state;
+        const { show, addResponse } = this.state;
         return (
-            <div> 
-            <Modal show={show} onHide={this.closeModal}>
-          <Modal.Header>
-            <Modal.Title>Çalışan Ekle</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-          {addResponse !== null ? renderError(addResponse) : null}
-          <input type="text" name="foodName" onChange={this.changedInput} className="form-control" placeholder="Çalışan ismini girin..." /><br />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={this.addEmployee} appearance="primary">
-              Ekle
+            <div>
+                <Modal show={show} onHide={this.closeModal}>
+                    <Modal.Header>
+                        <Modal.Title>Çalışan Ekle</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {addResponse !== null ? renderError(addResponse) : null}
+                        <input type="text" name="foodName" onChange={this.changedInput} className="form-control" placeholder="Çalışan ismini girin..." /><br />
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.addEmployee} appearance="primary">
+                            Ekle
             </Button>
-            <Button onClick={this.closeModal} appearance="subtle">
-              Kapat
+                        <Button onClick={this.closeModal} appearance="subtle">
+                            Kapat
             </Button>
-          </Modal.Footer>
-        </Modal>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }
@@ -91,8 +168,8 @@ export default class Employees extends Component {
         if (employees !== null) {
             return (
                 <div>
-                    <center><h3>Çalışanlar</h3></center><br/>
-                    <button onClick={this.modalStatus} className=" btn btn-mod btn-border-black btn-medium btn-circle" onClick={this.showModal}>Çalışan Ekle</button><br/>
+                    <center><h3>Çalışanlar</h3></center><br />
+                    <button onClick={this.modalStatus} className=" btn btn-mod btn-border-black btn-medium btn-circle" onClick={this.showModal}>Çalışan Ekle</button><br />
                     <table className="table table-dark">
                         <thead>
                             <tr>
@@ -110,8 +187,8 @@ export default class Employees extends Component {
                                     <td>{employee.name}</td>
                                     <td>{employee.totalTip} ₺</td>
                                     <td>
-                                        <button type="button" className="btn btn-danger">Çalışanı Sil</button>{" "}
-                                        <button type="button" className="btn btn-danger">Bahşişi Sıfırla</button>
+                                        <button type="button" className="btn btn-danger" onClick={() => { this.renderNotification(1, employee.id) }}>Çalışanı Sil</button>{" "}
+                                        <button type="button" className="btn btn-danger" onClick={() => { this.renderNotification(2, employee.id) }}>Bahşişi Sıfırla</button>
                                     </td>
                                 </tr>
                             )

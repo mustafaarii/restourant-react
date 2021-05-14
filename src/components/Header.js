@@ -60,6 +60,7 @@ class Header extends Component {
             <hr />
             <li><Link to="/add_reservation" className="tv-menu" data-toggle="dropdown">Rezervasyon Yap</Link></li>
             <li><Link to="/my_reservations" className="tv-menu" data-toggle="dropdown">Rezervasyonlarım</Link></li>
+            <li key="degerlendirme"><Link to="tip_the_employees" className="tv-menu" data-toggle="dropdown">Bahşiş Bırak</Link></li>
             <hr />
             <li><Link to="/to_order" className="tv-menu" data-toggle="dropdown">Sipariş ver</Link></li>
             <li><Link to="/my_orders" className="tv-menu" data-toggle="dropdown">Siparişlerim</Link></li>
@@ -103,12 +104,13 @@ class Header extends Component {
           </li>)
       }
       menuJSX.push(
-        <li key="cikis"><Link onClick={() => { sessionStorage.removeItem("token"); history.push("/login") }} className="tv-menu" data-toggle="dropdown">Çıkış Yap</Link></li>
+        <li key="degerlendirme"><Link onClick={() => { this.open() }} className="tv-menu" data-toggle="dropdown">Bizi Değerlendir</Link></li>
       )
 
       menuJSX.push(
-        <li key="degerlendirme"><Link onClick={() => { this.open() }} className="tv-menu" data-toggle="dropdown">Bizi Değerlendir</Link></li>
+        <li key="cikis"><Link onClick={() => { sessionStorage.removeItem("token"); history.push("/login") }} className="tv-menu" data-toggle="dropdown">Çıkış Yap</Link></li>
       )
+
 
       return menuJSX;
     }

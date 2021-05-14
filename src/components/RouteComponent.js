@@ -23,6 +23,7 @@ import myReservations from './user/myReservations';
 import NotFound from './NotFound';
 import Comments from './admin/Comments';
 import Employees from './admin/Employees';
+import TipTheEmployees from './user/TipTheEmployees';
 
 class RouteComponent extends Component {
 
@@ -50,6 +51,7 @@ class RouteComponent extends Component {
             routes.push(<Route exact path="/food/:id" component={FoodDetails} />)
             routes.push(<Route exact path="/add_reservation" component={addReservation} />)
             routes.push(<Route exact path="/my_reservations" component={myReservations} />)
+            routes.push(<Route exact path="/tip_the_employees" component={TipTheEmployees} />)
   
         }
         else {
