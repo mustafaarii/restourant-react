@@ -142,8 +142,8 @@ class Header extends Component {
     })
       .then(res => res.json())
       .then(data => {
-        if (data.status === "false") this.setState({ errorMessage: data.error });
-        else if (data.status === "true") {
+        if (data.status === false) this.setState({ errorMessage: data.error });
+        else if (data.status === true) {
           Alert.success("Yorumunuz tarafımıza iletildi.")
           this.setState({ showModal: false, comment: "" })
         }
