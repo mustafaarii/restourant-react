@@ -71,14 +71,8 @@ export default class Foods extends Component {
             if (res.status === 200 || res.status === 201) return res.json()
             else throw new Error();
         }).then(data => {
-            if (data.status == null) {
-                this.setState({ addResponse: { status: "false", errors: data.errors } })
-            } else if (data.status == "false") {
-                this.setState({ addResponse: { status: data.status, errors: [data.error] } })
-            } else {
-                this.setState({ addResponse: { status: data.status, message: data.message } });
-                this.getFoods();
-            }
+            this.setState({addResponse:data})
+            if(data.status===true) this.getFoods();
         }).catch(res => { Alert.error("Yemek eklenemedi. Daha sonra tekrar deneyin.") })
 
     }
@@ -108,7 +102,6 @@ export default class Foods extends Component {
     }
 
     changedFile = (e) => {
-        const { file } = this.state;
         this.setState({ file: e.target.files[0] })
     }
 

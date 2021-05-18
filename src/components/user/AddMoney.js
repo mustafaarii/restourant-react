@@ -50,7 +50,7 @@ class AddMoney extends Component {
                 if (res.status === 200) return res.json();
                 else throw new Error();
             }).then(data => {
-                if (data.status === "true") {
+                if (data.status === true) {
                     actions.increaseWallet(selectedMoney);
                     this.setState({ selectedMoney: 0 });
                     Alert.success(data.message);

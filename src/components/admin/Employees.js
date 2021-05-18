@@ -43,12 +43,8 @@ export default class Employees extends Component {
         })
             .then(res => res.json())
             .then(data => {
-                if (data.status == "false") {
-                    this.setState({ addResponse: { status: data.status, errors: [data.error] } })
-                } else {
-                    this.setState({ addResponse: { status: data.status, message: data.message } });
-                    this.getEmployees();
-                }
+               this.setState({addResponse:data});
+               if(data.status===true) this.getEmployees();
             })
             .catch(err => Alert.error("İşleminiz gerçekleştirilemedi, daha sonra tekrar deneyin."))
     }
@@ -63,10 +59,10 @@ export default class Employees extends Component {
         })
             .then(res => res.json())
             .then(data => {
-                if (data.status === "true") {
+                if (data.status === true) {
                     this.setState({ employees: this.state.employees.filter(employee => employee.id !== id) })
                     Alert.success(data.message);
-                } else if (data.status === "false") {
+                } else if (data.status === false) {
                     Alert.error(data.error);
                 }
             })
@@ -83,10 +79,10 @@ export default class Employees extends Component {
         })
             .then(res => res.json())
             .then(data => {
-                if (data.status === "true") {
+                if (data.status === true) {
                     Alert.success(data.message);
                     this.getEmployees();
-                } else if (data.status === "false") {
+                } else if (data.status === false) {
                     Alert.error(data.error);
                 }
             })

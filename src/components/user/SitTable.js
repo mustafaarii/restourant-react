@@ -42,7 +42,7 @@ class SitTable extends Component {
       else throw new Error();
     })
     .then(data=>{
-      if (data.status === "false") {Alert(data.error); setTimeout(this.getAllTables, 800);}
+      if (data.status === false) {Alert(data.error); setTimeout(this.getAllTables, 800);}
       else {Alert.success(data.message); history.push("/to_order")}
     })
     .catch(err=>{setTimeout(this.getAllTables, 800);})
@@ -71,7 +71,7 @@ class SitTable extends Component {
       .then(res => res.json())
       .then(data => {
         if (data.reservation) this.setState({ nextReservation: data.reservation })
-        else if (data.status === "false") this.setState({ nextReservationError: data.error })
+        else if (data.status === false) this.setState({ nextReservationError: data.error })
       })
       .catch(err => Alert.error("Sıradaki rezervasyon getirilirken bir hata oluştu"));
   }
@@ -93,9 +93,9 @@ class SitTable extends Component {
       if (res.status == 200) return res.json();
       else throw new Error();
     }).then(data => {
-      if (data.status === "false") {
+      if (data.status === false) {
         Alert.error(data.error);
-      } else if (data.status === "true") {
+      } else if (data.status === true) {
         Alert.success(data.message)
         history.push('/to_order')
       }

@@ -51,14 +51,10 @@ export default class Tables extends Component {
         }).then(data => {
             if (data.table) {
                 const {tables,activePage,totalPages} = this.state;
-                this.setState({ addResponse: { status: "true", message: "Masa başarıyla eklendi." } });
+                this.setState({ addResponse: data });
                if(activePage===totalPages) this.setState({tables : [...tables,data.table]})
             }else{
-                if (data.status == null) {
-                    this.setState({ addResponse: { status: "false", errors: data.errors } })
-                } else if (data.status == "false") {
-                    this.setState({ addResponse: { status: data.status, errors: [data.error] } },()=>{console.log(data.error)})
-                }
+                this.setState({addResponse:data})
             }
             
         }).catch(res=>{Alert.error("Masa eklenemedi. Daha sonra tekrar deneyin.")})

@@ -37,10 +37,10 @@ export default class addReservation extends Component {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(formData)
-        }).then(res => res.json()).then(data => {
-            if (data.errors) this.setState({ response: { status: "false", errors: data.errors } })
-            else if (data.status === "false") this.setState({ response: { status: data.status, errors: [data.error] } })
-            else this.setState({ response: { status: data.status, message: data.message } })
+        })
+        .then(res => res.json())
+        .then(data => {
+           this.setState({response:data})
         }).catch(err => Alert.error("Bir hata oluştu. Daha sonra tekrar deneyin."));
     }
 

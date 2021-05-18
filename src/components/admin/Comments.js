@@ -26,7 +26,7 @@ export default class Comments extends Component {
         })
             .then(res => res.json())
             .then(data => { this.setState({ comments: data.content, totalPages: data.totalPages }) })
-            .catch(err => console.log(err))
+            .catch(err =>{})
     }
 
     deleteComment = id => {
@@ -38,8 +38,8 @@ export default class Comments extends Component {
         })
             .then(res => res.json())
             .then(data => {
-                if (data.status === "true") {Alert.success(data.message); this.getComments();}
-                else if (data.status === "false") Alert.error(data.error)
+                if (data.status === true) {Alert.success(data.message); this.getComments();}
+                else if (data.status === false) Alert.error(data.error)
             })
             .catch(err => console.log(err))
     }
@@ -152,6 +152,7 @@ export default class Comments extends Component {
     render() {
         return (
             <div className="container" style={{ marginTop: "10%" }}>
+                <center><h3>Yorumlar</h3></center><br />
                 {this.renderComments()}
                 {this.renderModal()}
             </div>

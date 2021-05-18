@@ -47,13 +47,7 @@ export default class Register extends Component {
         })
         .then(res=>res.json())
         .then(data => {
-            if(data.status==null){
-                this.setState({response:{status:"false",errors:data.errors}})
-            }else if(data.status=="false"){
-                this.setState({response:{status:data.status,errors:[data.error]}})
-            }else{
-                this.setState({response:{status:data.status,message:data.message}})
-            }
+            this.setState({response:data})
         })
         .catch(res=> {})
 

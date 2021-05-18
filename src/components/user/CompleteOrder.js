@@ -89,7 +89,7 @@ class CompleteOrder extends Component {
             if(res.status===200) return res.json();
             if(res.status!==200) throw new Error();
         }).then(data=>{
-            if (data.status === "true") {Alert.success(data.message); actions.clearBasket();}
+            if (data.status === true) {Alert.success(data.message); actions.clearBasket();}
             else Alert.error(data.error);
         }).catch(res=>Alert.error("İşleminiz gerçekleştirilemedi. Daha sonra tekrar deneyin."))
     }

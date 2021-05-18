@@ -45,8 +45,8 @@ export default class myReservations extends Component {
     })
     .then(res=>res.json())
     .then(data => {
-      if(data.status === "false") Alert.error(data.error);
-      else if(data.status === "true"){
+      if(data.status === false) Alert.error(data.error);
+      else if(data.status === true){
         const newArr = reservations.filter(res=>res.id!=id)
         this.setState({reservations:newArr},()=>{Alert.success(data.message)})
       }

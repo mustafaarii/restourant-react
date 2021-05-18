@@ -16,8 +16,7 @@ class TipTheEmployees extends Component {
     componentDidMount() {
         setTimeout(this.getAllEmployees, 800);
     }
-
-
+    
     getAllEmployees = () => {
         const token = sessionStorage.getItem("token");
         fetch(apiURL + "user/all_employees", {
@@ -33,12 +32,13 @@ class TipTheEmployees extends Component {
         e.preventDefault();
         const token = sessionStorage.getItem("token");
         const {inputValues} = this.state;
-        inputValues.price = parseInt(inputValues.price);
-        
+
         if (Object.keys(inputValues).length<=1) {
-            this.setState({response:{status:"false",errors:["Lütfen tüm alanları doldurun."]}})
+            this.setState({response:{status:false,error:"Lütfen tüm alanları doldurun."}})
             return;
         }
+        inputValues.price = parseInt(inputValues.price);
+        
         fetch(apiURL+"user/tip/"+inputValues.employeeId,{
             method:"POST",
             headers:{
@@ -49,15 +49,14 @@ class TipTheEmployees extends Component {
         })
         .then(res=>res.json())
         .then(data=>{
-            if (data.status==="true") {
+            if (data.status===true) {
                 const {employees} = this.state;
                 const index = employees.findIndex(emp=>emp.id===parseInt(inputValues.employeeId))
                 employees[index].totalTip+=inputValues.price;
-                
                 this.props.actions.decreaseWallet(inputValues.price);
                 this.setState({response:data,employees})
-            }else if(data.status==="false"){
-                this.setState({response:{status:data.status,errors:[data.error]}});
+            }else if(data.status===false){
+                this.setState({response:data});
             }
             
         })
@@ -65,7 +64,7 @@ class TipTheEmployees extends Component {
 
     inputsOnChanged = e => {
         const {inputValues} = this.state;
-        this.setState({inputValues:{...inputValues,[e.target.name]:e.target.value}})
+        this.setState({inputValues:{...inputValues,[e.target.name]:e.target.value}},()=>console.log(this.state.inputValues))
     }
 
     renderForm = () => {
@@ -87,7 +86,7 @@ class TipTheEmployees extends Component {
 
                         </div>
                         <div className="form-group">
-                            <label htmlFor="exampleFormControlSelect1">Bahşiş Miktarı</label>
+                            <label htmlFor="exampleFormControlSelect2">Bahşiş Miktarı</label>
                             <select name="price" className="form-control" onChange={this.inputsOnChanged}>
                                 <option>--Bahşiş Seçin--</option>
                                 <option value="3">3₺</option>

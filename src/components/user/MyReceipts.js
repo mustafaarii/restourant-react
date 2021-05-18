@@ -23,7 +23,7 @@ export default class MyReceipts extends Component {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token
       }
-    }).then(res => res.json()).then(data => this.setState({ receipts: data.content, activePage, totalPages: data.totalPages }, () => { console.log(this.state) }));
+    }).then(res => res.json()).then(data => this.setState({ receipts: data.content, activePage, totalPages: data.totalPages }));
   }
 
   handleSelect = (activePage) => {

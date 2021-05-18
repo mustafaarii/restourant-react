@@ -44,14 +44,8 @@ export default class Tables extends Component {
             if (res.status === 200 || res.status===201) return res.json();
             else  throw new Error();
         }).then(data => {
-            if (data.status == null) {
-                this.setState({ addResponse: { status: "false", errors: data.errors } })
-            } else if (data.status == "false") {
-                this.setState({ addResponse: { status: data.status, errors: [data.error] } })
-            } else {
-                this.setState({ addResponse: { status: data.status, message: data.message } });
-                this.getAllCategories();
-            }
+            this.setState({addResponse:data});
+            if(data.status===true) this.getAllCategories();
         }).catch(res=>{Alert.error("Kategori eklenemedi. Daha sonra tekrar deneyin.")})
     }
 
